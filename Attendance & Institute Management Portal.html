@@ -1,0 +1,2475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkillTech ITI & Institute Management Portal</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased selection:bg-indigo-500 selection:text-white">
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="fixed top-4 right-4 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none px-4 sm:px-0"></div>
+
+    <!-- ===================================================================== -->
+    <!-- FULL-SIZE CAPTURED PHOTO PREVIEW MODAL                                -->
+    <!-- ===================================================================== -->
+    <div id="photo-preview-modal" onclick="closePhotoModal()" class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div onclick="event.stopPropagation()" class="bg-white rounded-3xl max-w-md w-full overflow-hidden shadow-2xl border border-slate-200">
+            <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
+                <div>
+                    <h4 id="photo-modal-title" class="text-sm font-bold text-slate-900">Captured Face Verification</h4>
+                    <p id="photo-modal-subtitle" class="text-xs text-slate-500 mt-0.5"></p>
+                </div>
+                <button type="button" onclick="closePhotoModal()" class="p-2 rounded-xl text-slate-400 hover:bg-slate-100 hover:text-slate-700">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="p-5 bg-slate-900 flex items-center justify-center">
+                <img id="photo-modal-img" src="" alt="Captured Face" class="max-h-80 w-auto rounded-2xl object-contain border-2 border-white/20 shadow-lg">
+            </div>
+            <div class="px-5 py-3.5 bg-slate-50 text-xs text-slate-600 flex items-center gap-2">
+                <i data-lucide="map-pin" class="w-4 h-4 text-rose-600 shrink-0"></i>
+                <span id="photo-modal-location" class="truncate"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- 1. AUTHENTICATION & PASSWORD RESET VIEW                               -->
+    <!-- ===================================================================== -->
+    <div id="auth-view" class="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 p-4">
+        <div class="w-full max-w-4xl bg-white rounded-3xl shadow-2xl overflow-hidden grid grid-cols-1 lg:grid-cols-12">
+            
+            <!-- Left Branding & 1-Click Demo Panel -->
+            <div class="lg:col-span-5 bg-gradient-to-br from-indigo-600 to-violet-700 p-8 text-white flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-11 h-11 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
+                            <i data-lucide="graduation-cap" class="w-6 h-6 text-white"></i>
+                        </div>
+                        <div>
+                            <h1 class="text-xl font-bold tracking-tight">SkillTech Institute</h1>
+                            <p class="text-xs text-indigo-200">Biometric Face + GPS Attendance ERP</p>
+                        </div>
+                    </div>
+                    <h2 class="text-2xl font-bold leading-snug mb-3">Smart Attendance & Campus Portal</h2>
+                    <p class="text-sm text-indigo-100 leading-relaxed mb-6">
+                        Dual Face-Capture Punch In/Out with GPS, Dedicated Punch Logs, Month-wise Present/Absent Analytics, Leaves, Complaints & Holiday Calendar.
+                    </p>
+                </div>
+
+                <!-- 1-Click Demo Credentials Box -->
+                <div class="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/20 space-y-2.5">
+                    <p class="text-xs font-semibold uppercase tracking-wider text-indigo-200 flex items-center gap-1.5">
+                        <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Quick Demo Login (1-Click)
+                    </p>
+                    <button type="button" onclick="fillDemoCredentials('admin')" class="w-full text-left p-2.5 rounded-xl bg-white/10 hover:bg-white/20 transition flex items-center justify-between group">
+                        <div>
+                            <div class="text-xs font-bold text-white">Admin Portal</div>
+                            <div class="text-[11px] text-indigo-200">ID: admin • Pass: admin123</div>
+                        </div>
+                        <span class="text-xs bg-white text-indigo-700 font-semibold px-2.5 py-1 rounded-lg group-hover:scale-105 transition">Login</span>
+                    </button>
+                    <button type="button" onclick="fillDemoCredentials('STU001')" class="w-full text-left p-2.5 rounded-xl bg-white/10 hover:bg-white/20 transition flex items-center justify-between group">
+                        <div>
+                            <div class="text-xs font-bold text-white">Student 1 (Rahul Kumar)</div>
+                            <div class="text-[11px] text-indigo-200">ID: STU001 • Pass: pass123</div>
+                        </div>
+                        <span class="text-xs bg-white text-indigo-700 font-semibold px-2.5 py-1 rounded-lg group-hover:scale-105 transition">Login</span>
+                    </button>
+                    <button type="button" onclick="fillDemoCredentials('STU002')" class="w-full text-left p-2.5 rounded-xl bg-white/10 hover:bg-white/20 transition flex items-center justify-between group">
+                        <div>
+                            <div class="text-xs font-bold text-white">Student 2 (Priya Kumari)</div>
+                            <div class="text-[11px] text-indigo-200">ID: STU002 • Pass: pass123</div>
+                        </div>
+                        <span class="text-xs bg-white text-indigo-700 font-semibold px-2.5 py-1 rounded-lg group-hover:scale-105 transition">Login</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Right Login Form -->
+            <div class="lg:col-span-7 p-8 sm:p-10 flex flex-col justify-center">
+                <div class="bg-slate-100 p-1.5 rounded-2xl grid grid-cols-2 gap-1 mb-8">
+                    <button type="button" id="tab-student" onclick="switchLoginRole('student')" class="py-2.5 px-4 rounded-xl text-sm font-semibold transition flex items-center justify-center gap-2 bg-white text-indigo-600 shadow-sm">
+                        <i data-lucide="user-check" class="w-4 h-4"></i> Student Login
+                    </button>
+                    <button type="button" id="tab-admin" onclick="switchLoginRole('admin')" class="py-2.5 px-4 rounded-xl text-sm font-semibold transition flex items-center justify-center gap-2 text-slate-600 hover:text-slate-900">
+                        <i data-lucide="shield-check" class="w-4 h-4"></i> Admin Login
+                    </button>
+                </div>
+
+                <div class="mb-6">
+                    <h3 id="login-heading" class="text-2xl font-bold text-slate-900">Student Sign In</h3>
+                    <p id="login-subtext" class="text-sm text-slate-500 mt-1">Apni Student Login ID aur Password enter karein</p>
+                </div>
+
+                <form id="login-form" onsubmit="handleLogin(event)" class="space-y-5">
+                    <div>
+                        <label id="login-id-label" class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-2">Student Login ID</label>
+                        <div class="relative">
+                            <i data-lucide="id-card" class="w-5 h-5 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+                            <input type="text" id="login-id" required placeholder="e.g. STU001" class="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition">
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600">Password</label>
+                            <button type="button" onclick="openResetModal()" class="text-xs font-semibold text-indigo-600 hover:text-indigo-700 hover:underline">
+                                Forgot / Reset Password?
+                            </button>
+                        </div>
+                        <div class="relative">
+                            <i data-lucide="lock" class="w-5 h-5 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+                            <input type="password" id="login-password" required placeholder="••••••••" class="w-full pl-11 pr-11 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition">
+                            <button type="button" onclick="togglePasswordVisibility('login-password')" class="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
+                                <i data-lucide="eye" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="w-full py-3.5 px-6 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl shadow-lg shadow-indigo-600/25 transition flex items-center justify-center gap-2">
+                        <span>Login to Portal</span>
+                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    </button>
+                </form>
+
+                <div class="mt-6 pt-5 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+                    <span>Reset local demo database?</span>
+                    <button type="button" onclick="resetAllDemoData()" class="text-rose-600 hover:underline font-medium">Restore Default Data</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Password Reset Modal -->
+    <div id="reset-modal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl">
+            <div class="flex items-center justify-between mb-5">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
+                        <i data-lucide="key-round" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-slate-900">Reset Password</h3>
+                        <p class="text-xs text-slate-500">Enter Login ID & set a new password</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeResetModal()" class="p-2 rounded-xl text-slate-400 hover:bg-slate-100 hover:text-slate-600">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <form onsubmit="handlePasswordReset(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1.5">Account Role</label>
+                    <select id="reset-role" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <option value="student">Student Account</option>
+                        <option value="admin">Admin Account</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1.5">Login ID</label>
+                    <input type="text" id="reset-id" required placeholder="e.g. STU001 or admin" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1.5">New Password</label>
+                    <input type="password" id="reset-new-pass" required minlength="4" placeholder="Enter new password" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1.5">Confirm New Password</label>
+                    <input type="password" id="reset-confirm-pass" required minlength="4" placeholder="Re-enter new password" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div class="pt-2 flex gap-3">
+                    <button type="button" onclick="closeResetModal()" class="flex-1 py-2.5 px-4 border border-slate-200 text-slate-600 font-semibold rounded-xl hover:bg-slate-50 text-sm">Cancel</button>
+                    <button type="submit" class="flex-1 py-2.5 px-4 bg-indigo-600 text-white font-semibold rounded-xl hover:bg-indigo-700 text-sm shadow-md shadow-indigo-600/20">Update Password</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- 2. MAIN APPLICATION SHELL (ADMIN & STUDENT PORTALS)                   -->
+    <!-- ===================================================================== -->
+    <div id="app-shell" class="hidden min-h-screen flex bg-slate-50">
+        
+        <!-- Mobile Sidebar Backdrop -->
+        <div id="sidebar-backdrop" onclick="toggleMobileSidebar(false)" class="fixed inset-0 bg-slate-900/50 z-30 hidden lg:hidden backdrop-blur-xs"></div>
+
+        <!-- Sidebar Navigation -->
+        <aside id="sidebar" class="fixed lg:static inset-y-0 left-0 z-40 w-72 bg-slate-900 text-slate-300 flex flex-col transform -translate-x-full lg:translate-x-0 transition-transform duration-200 ease-in-out">
+            <!-- Brand Header -->
+            <div class="h-16 px-6 flex items-center justify-between border-b border-slate-800">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center text-white">
+                        <i data-lucide="graduation-cap" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <span class="font-bold text-white text-base tracking-tight block leading-none">SkillTech ERP</span>
+                        <span id="portal-role-badge" class="text-[10px] uppercase tracking-widest text-indigo-400 font-semibold mt-1 block">Admin Panel</span>
+                    </div>
+                </div>
+                <button type="button" onclick="toggleMobileSidebar(false)" class="lg:hidden text-slate-400 hover:text-white p-1">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <!-- Dynamic Navigation Links -->
+            <nav id="sidebar-nav" class="flex-1 px-4 py-5 space-y-1.5 overflow-y-auto"></nav>
+
+            <!-- User Profile Card in Sidebar Footer -->
+            <div class="p-4 border-t border-slate-800">
+                <div class="bg-slate-800/80 rounded-2xl p-3 flex items-center gap-3">
+                    <img id="sidebar-avatar" src="" alt="User" class="w-10 h-10 rounded-xl object-cover bg-slate-700 border border-slate-600">
+                    <div class="min-w-0 flex-1">
+                        <p id="sidebar-user-name" class="text-sm font-semibold text-white truncate">User Name</p>
+                        <p id="sidebar-user-sub" class="text-xs text-slate-400 truncate">ID / Role</p>
+                    </div>
+                    <button type="button" onclick="logout()" title="Logout" class="p-2 rounded-xl text-slate-400 hover:text-rose-400 hover:bg-slate-700/60 transition">
+                        <i data-lucide="log-out" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <div class="flex-1 flex flex-col min-w-0">
+            <!-- Top Header Bar -->
+            <header class="h-16 bg-white border-b border-slate-200 px-4 sm:px-8 flex items-center justify-between sticky top-0 z-20">
+                <div class="flex items-center gap-3">
+                    <button type="button" onclick="toggleMobileSidebar(true)" class="lg:hidden p-2 rounded-xl text-slate-600 hover:bg-slate-100">
+                        <i data-lucide="menu" class="w-5 h-5"></i>
+                    </button>
+                    <div>
+                        <h2 id="header-page-title" class="text-lg sm:text-xl font-bold text-slate-900">Dashboard</h2>
+                        <p id="header-date-display" class="text-xs text-slate-500 hidden sm:block"></p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <div id="live-clock-pill" class="hidden md:flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-50 text-indigo-700 text-xs font-semibold">
+                        <span class="w-2 h-2 rounded-full bg-indigo-600 animate-pulse"></span>
+                        <span id="header-live-clock">00:00:00</span>
+                    </div>
+                    <button type="button" onclick="logout()" class="flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-200 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 text-xs font-semibold text-slate-600 transition">
+                        <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+                        <span>Logout</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Dynamic Section Container -->
+            <main id="main-content" class="flex-1 p-4 sm:p-8 max-w-7xl w-full mx-auto space-y-6"></main>
+        </div>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- JAVASCRIPT APPLICATION LOGIC & STATE MANAGEMENT                       -->
+    <!-- ===================================================================== -->
+    <script>
+        // -------------------------------------------------------------------
+        // 1. INITIAL DEMO DATA & LOCALSTORAGE PERSISTENCE
+        // -------------------------------------------------------------------
+        const STORAGE_KEY = 'skilltech_erp_v2';
+
+        function getTodayStr() {
+            const d = new Date();
+            const year = d.getFullYear();
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        function getCurrentMonthStr() {
+            return getTodayStr().slice(0, 7); // YYYY-MM
+        }
+
+        function generateInitialData() {
+            const today = getTodayStr();
+            const ym = getCurrentMonthStr();
+
+            return {
+                admin: {
+                    id: 'admin',
+                    password: 'admin123',
+                    name: 'Er. Rajesh Sharma (Principal)',
+                    photo: 'https://placehold.co/150x150/4f46e5/ffffff?text=RS'
+                },
+                students: [
+                    {
+                        id: 'STU001',
+                        password: 'pass123',
+                        name: 'Rahul Kumar',
+                        batchId: 'B-2026-01',
+                        trade: 'Electrician',
+                        phone: '9876543210',
+                        photo: 'https://placehold.co/150x150/0ea5e9/ffffff?text=RK',
+                        createdAt: `${ym}-01`
+                    },
+                    {
+                        id: 'STU002',
+                        password: 'pass123',
+                        name: 'Priya Kumari',
+                        batchId: 'B-2026-01',
+                        trade: 'COPA',
+                        phone: '9876543211',
+                        photo: 'https://placehold.co/150x150/ec4899/ffffff?text=PK',
+                        createdAt: `${ym}-01`
+                    },
+                    {
+                        id: 'STU003',
+                        password: 'pass123',
+                        name: 'Amit Mahato',
+                        batchId: 'B-2026-02',
+                        trade: 'Fitter',
+                        phone: '9876543212',
+                        photo: 'https://placehold.co/150x150/10b981/ffffff?text=AM',
+                        createdAt: `${ym}-01`
+                    },
+                    {
+                        id: 'STU004',
+                        password: 'pass123',
+                        name: 'Sneha Singh',
+                        batchId: 'B-2026-02',
+                        trade: 'Welder',
+                        phone: '9876543213',
+                        photo: 'https://placehold.co/150x150/f59e0b/ffffff?text=SS',
+                        createdAt: `${ym}-01`
+                    }
+                ],
+                // Each punch record stores BOTH punchInPhoto and punchOutPhoto + locations + timestamps
+                punchLogs: [
+                    {
+                        id: 'PNC-101',
+                        studentId: 'STU001',
+                        date: `${ym}-02`,
+                        punchInTime: '09:02:15 AM',
+                        punchInTs: `${ym}T09:02:15`,
+                        punchInPhoto: 'https://placehold.co/240x240/0ea5e9/ffffff?text=Rahul+IN+02',
+                        punchInLocation: 'Main Gate, Jamshedpur Campus (22.7925° N, 86.1842° E)',
+                        punchOutTime: '04:15:30 PM',
+                        punchOutTs: `${ym}T16:15:30`,
+                        punchOutPhoto: 'https://placehold.co/240x240/0284c7/ffffff?text=Rahul+OUT+02',
+                        punchOutLocation: 'Main Gate, Jamshedpur Campus (22.7925° N, 86.1842° E)'
+                    },
+                    {
+                        id: 'PNC-102',
+                        studentId: 'STU001',
+                        date: `${ym}-03`,
+                        punchInTime: '08:58:10 AM',
+                        punchInTs: `${ym}T08:58:10`,
+                        punchInPhoto: 'https://placehold.co/240x240/0ea5e9/ffffff?text=Rahul+IN+03',
+                        punchInLocation: 'Electrician Lab-1 (22.7928° N, 86.1845° E)',
+                        punchOutTime: '04:05:45 PM',
+                        punchOutTs: `${ym}T16:05:45`,
+                        punchOutPhoto: 'https://placehold.co/240x240/0284c7/ffffff?text=Rahul+OUT+03',
+                        punchOutLocation: 'Electrician Lab-1 (22.7928° N, 86.1845° E)'
+                    },
+                    {
+                        id: 'PNC-103',
+                        studentId: 'STU001',
+                        date: `${ym}-04`,
+                        punchInTime: '09:10:00 AM',
+                        punchInTs: `${ym}T09:10:00`,
+                        punchInPhoto: 'https://placehold.co/240x240/0ea5e9/ffffff?text=Rahul+IN+04',
+                        punchInLocation: 'Main Gate, Jamshedpur Campus (22.7925° N, 86.1842° E)',
+                        punchOutTime: '04:00:20 PM',
+                        punchOutTs: `${ym}T16:00:20`,
+                        punchOutPhoto: 'https://placehold.co/240x240/0284c7/ffffff?text=Rahul+OUT+04',
+                        punchOutLocation: 'Main Gate, Jamshedpur Campus (22.7925° N, 86.1842° E)'
+                    },
+                    {
+                        id: 'PNC-104',
+                        studentId: 'STU002',
+                        date: today,
+                        punchInTime: '08:54:22 AM',
+                        punchInTs: `${today}T08:54:22`,
+                        punchInPhoto: 'https://placehold.co/240x240/ec4899/ffffff?text=Priya+IN',
+                        punchInLocation: 'COPA Computer Block (22.8046° N, 86.2029° E)',
+                        punchOutTime: null,
+                        punchOutTs: null,
+                        punchOutPhoto: null,
+                        punchOutLocation: null
+                    },
+                    {
+                        id: 'PNC-105',
+                        studentId: 'STU003',
+                        date: today,
+                        punchInTime: '09:01:12 AM',
+                        punchInTs: `${today}T09:01:12`,
+                        punchInPhoto: 'https://placehold.co/240x240/10b981/ffffff?text=Amit+IN',
+                        punchInLocation: 'Fitter Workshop-B (22.7867° N, 86.1664° E)',
+                        punchOutTime: '04:12:40 PM',
+                        punchOutTs: `${today}T16:12:40`,
+                        punchOutPhoto: 'https://placehold.co/240x240/059669/ffffff?text=Amit+OUT',
+                        punchOutLocation: 'Fitter Workshop-B (22.7867° N, 86.1664° E)'
+                    }
+                ],
+                leaves: [
+                    {
+                        id: 'LV-101',
+                        studentId: 'STU001',
+                        fromDate: `${ym}-10`,
+                        toDate: `${ym}-11`,
+                        reason: 'Viral fever aur doctor checkup ke liye 2 din ki chutti chahiye.',
+                        status: 'Approved',
+                        adminRemark: 'Approved. Take care and submit medical slip.',
+                        appliedOn: `${ym}-09`
+                    },
+                    {
+                        id: 'LV-102',
+                        studentId: 'STU004',
+                        fromDate: today,
+                        toDate: today,
+                        reason: 'Family wedding ceremony at hometown.',
+                        status: 'Pending',
+                        adminRemark: '',
+                        appliedOn: today
+                    }
+                ],
+                complaints: [
+                    {
+                        id: 'CMP-201',
+                        studentId: 'STU001',
+                        category: 'Lab & Workshop Equipment',
+                        subject: 'Multimeter aur Soldering Iron ki kami',
+                        description: 'Electrician Lab-2 me 4 digital multimeters kaam nahi kar rahe hain, practical me dikkat ho rahi hai.',
+                        status: 'Pending',
+                        adminReply: '',
+                        date: `${ym}-08`
+                    },
+                    {
+                        id: 'CMP-202',
+                        studentId: 'STU002',
+                        category: 'IT & Computer Lab',
+                        subject: 'PC No. 14 Keyboard & Mouse Issue',
+                        description: 'COPA lab me PC-14 ka keyboard keys stuck ho raha hai.',
+                        status: 'Resolved',
+                        adminReply: 'Naya wireless keyboard & mouse combo install kar diya gaya hai.',
+                        date: `${ym}-05`
+                    }
+                ],
+                holidays: [
+                    {
+                        id: 'HOL-1',
+                        date: `${ym}-24`,
+                        title: 'Guru Nanak Jayanti',
+                        type: 'Gazetted Holiday',
+                        description: 'Institute aur sabhi workshops band rahenge.'
+                    },
+                    {
+                        id: 'HOL-2',
+                        date: '2026-12-25',
+                        title: 'Christmas Day',
+                        type: 'Public Holiday',
+                        description: 'Winter holiday celebration.'
+                    },
+                    {
+                        id: 'HOL-3',
+                        date: '2027-01-26',
+                        title: 'Republic Day (Gantantra Diwas)',
+                        type: 'National Holiday',
+                        description: 'Flag hoisting ceremony at 8:30 AM in campus ground.'
+                    }
+                ]
+            };
+        }
+
+        let appData = loadData();
+        let currentUser = null; // { role: 'admin' | 'student', data: ... }
+        let activeTab = 'dashboard';
+        let loginRoleSelected = 'student';
+        let webcamStream = null;
+        let currentGPSLocation = 'Detecting GPS coordinates...';
+
+        function loadData() {
+            try {
+                const raw = localStorage.getItem(STORAGE_KEY);
+                if (!raw) {
+                    const initial = generateInitialData();
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(initial));
+                    return initial;
+                }
+                return JSON.parse(raw);
+            } catch (e) {
+                return generateInitialData();
+            }
+        }
+
+        function saveData() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
+        }
+
+        function resetAllDemoData() {
+            appData = generateInitialData();
+            saveData();
+            showToast('Demo data successfully restored!', 'success');
+        }
+
+        // -------------------------------------------------------------------
+        // 2. TOAST NOTIFICATIONS, PHOTO MODAL & UTILITIES
+        // -------------------------------------------------------------------
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const colors = {
+                success: 'bg-emerald-600 text-white',
+                error: 'bg-rose-600 text-white',
+                warning: 'bg-amber-500 text-white',
+                info: 'bg-slate-900 text-white'
+            };
+            const icons = {
+                success: 'check-circle-2',
+                error: 'alert-circle',
+                warning: 'alert-triangle',
+                info: 'info'
+            };
+
+            const toast = document.createElement('div');
+            toast.className = `${colors[type] || colors.info} pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-2xl shadow-xl text-sm font-medium transform transition-all duration-300 translate-y-2 opacity-0`;
+            toast.innerHTML = `
+                <i data-lucide="${icons[type] || 'info'}" class="w-5 h-5 shrink-0"></i>
+                <span class="flex-1">${message}</span>
+            `;
+            container.appendChild(toast);
+            lucide.createIcons();
+
+            requestAnimationFrame(() => {
+                toast.classList.remove('translate-y-2', 'opacity-0');
+            });
+
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-2');
+                setTimeout(() => toast.remove(), 300);
+            }, 3500);
+        }
+
+        function openPhotoModal(imgSrc, title, subtitle, location) {
+            if (!imgSrc) return;
+            document.getElementById('photo-modal-img').src = imgSrc;
+            document.getElementById('photo-modal-title').textContent = title;
+            document.getElementById('photo-modal-subtitle').textContent = subtitle;
+            document.getElementById('photo-modal-location').textContent = location || 'Location not recorded';
+            document.getElementById('photo-preview-modal').classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function closePhotoModal() {
+            document.getElementById('photo-preview-modal').classList.add('hidden');
+        }
+
+        function formatDateReadable(dateStr) {
+            if (!dateStr) return '-';
+            const options = { day: '2-digit', month: 'short', year: 'numeric' };
+            return new Date(dateStr + 'T00:00:00').toLocaleDateString('en-IN', options);
+        }
+
+        function getStudentById(id) {
+            return appData.students.find(s => s.id.toLowerCase() === id.toLowerCase());
+        }
+
+        function calculateDurationHours(inTs, outTs) {
+            if (!inTs || !outTs) return null;
+            const diffMs = new Date(outTs) - new Date(inTs);
+            if (isNaN(diffMs) || diffMs <= 0) return '0h 01m';
+            const totalMins = Math.floor(diffMs / 60000);
+            const hrs = Math.floor(totalMins / 60);
+            const mins = totalMins % 60;
+            return `${hrs}h ${String(mins).padStart(2, '0')}m`;
+        }
+
+        // Helper to expand approved leaves into individual YYYY-MM-DD dates
+        function getApprovedLeaveDatesForStudent(studentId, monthPrefix) {
+            const leaveDates = new Set();
+            const studentLeaves = appData.leaves.filter(l => l.studentId === studentId && l.status === 'Approved');
+            studentLeaves.forEach(lv => {
+                let curr = new Date(lv.fromDate + 'T00:00:00');
+                const end = new Date(lv.toDate + 'T00:00:00');
+                while (curr <= end) {
+                    const y = curr.getFullYear();
+                    const m = String(curr.getMonth() + 1).padStart(2, '0');
+                    const d = String(curr.getDate()).padStart(2, '0');
+                    const ds = `${y}-${m}-${d}`;
+                    if (ds.startsWith(monthPrefix)) {
+                        leaveDates.add(ds);
+                    }
+                    curr.setDate(curr.getDate() + 1);
+                }
+            });
+            return leaveDates;
+        }
+
+        // Compute Month-wise Present / Absent / Leave stats for a student
+        function computeMonthlyAttendanceStats(studentId, monthStr) {
+            const [year, month] = monthStr.split('-').map(Number);
+            const daysInMonth = new Date(year, month, 0).getDate();
+            const todayStr = getTodayStr();
+
+            const presentDates = new Set(
+                appData.punchLogs
+                    .filter(p => p.studentId === studentId && p.date.startsWith(monthStr))
+                    .map(p => p.date)
+            );
+            const leaveDates = getApprovedLeaveDatesForStudent(studentId, monthStr);
+            const holidayDates = new Set(
+                appData.holidays
+                    .filter(h => h.date.startsWith(monthStr))
+                    .map(h => h.date)
+            );
+
+            let workingDays = 0;
+            let presentCount = 0;
+            let absentCount = 0;
+            let leaveCount = 0;
+            const dailyBreakdown = [];
+
+            for (let d = 1; d <= daysInMonth; d++) {
+                const dateStr = `${monthStr}-${String(d).padStart(2, '0')}`;
+                const dayObj = new Date(dateStr + 'T00:00:00');
+                const isSunday = dayObj.getDay() === 0;
+                const isHoliday = holidayDates.has(dateStr);
+                const isFuture = dateStr > todayStr;
+
+                let status = 'Upcoming';
+                if (presentDates.has(dateStr)) {
+                    status = 'Present';
+                    presentCount++;
+                    if (!isSunday && !isHoliday) workingDays++;
+                } else if (leaveDates.has(dateStr)) {
+                    status = 'Leave';
+                    leaveCount++;
+                    if (!isSunday && !isHoliday) workingDays++;
+                } else if (isSunday) {
+                    status = 'Sunday';
+                } else if (isHoliday) {
+                    status = 'Holiday';
+                } else if (!isFuture) {
+                    status = 'Absent';
+                    absentCount++;
+                    workingDays++;
+                }
+
+                dailyBreakdown.push({ day: d, dateStr, status });
+            }
+
+            const effectiveTotal = Math.max(workingDays, presentCount + absentCount + leaveCount);
+            const percentage = effectiveTotal > 0 ? Math.round((presentCount / effectiveTotal) * 100) : 0;
+
+            return {
+                workingDays: effectiveTotal,
+                presentCount,
+                absentCount,
+                leaveCount,
+                percentage,
+                dailyBreakdown
+            };
+        }
+
+        // -------------------------------------------------------------------
+        // 3. AUTHENTICATION & PASSWORD RESET LOGIC
+        // -------------------------------------------------------------------
+        function switchLoginRole(role) {
+            loginRoleSelected = role;
+            const tabStudent = document.getElementById('tab-student');
+            const tabAdmin = document.getElementById('tab-admin');
+            const heading = document.getElementById('login-heading');
+            const subtext = document.getElementById('login-subtext');
+            const idLabel = document.getElementById('login-id-label');
+            const idInput = document.getElementById('login-id');
+
+            if (role === 'student') {
+                tabStudent.className = 'py-2.5 px-4 rounded-xl text-sm font-semibold transition flex items-center justify-center gap-2 bg-white text-indigo-600 shadow-sm';
+                tabAdmin.className = 'py-2.5 px-4 rounded-xl text-sm font-semibold transition flex items-center justify-center gap-2 text-slate-600 hover:text-slate-900';
+                heading.textContent = 'Student Sign In';
+                subtext.textContent = 'Apni Student Login ID aur Password enter karein';
+                idLabel.textContent = 'Student Login ID';
+                idInput.placeholder = 'e.g. STU001';
+            } else {
+                tabAdmin.className = 'py-2.5 px-4 rounded-xl text-sm font-semibold transition flex items-center justify-center gap-2 bg-white text-indigo-600 shadow-sm';
+                tabStudent.className = 'py-2.5 px-4 rounded-xl text-sm font-semibold transition flex items-center justify-center gap-2 text-slate-600 hover:text-slate-900';
+                heading.textContent = 'Admin Sign In';
+                subtext.textContent = 'Institute Administrator credentials enter karein';
+                idLabel.textContent = 'Admin Login ID';
+                idInput.placeholder = 'e.g. admin';
+            }
+        }
+
+        function fillDemoCredentials(target) {
+            if (target === 'admin') {
+                switchLoginRole('admin');
+                document.getElementById('login-id').value = appData.admin.id;
+                document.getElementById('login-password').value = appData.admin.password;
+                currentUser = { role: 'admin', data: appData.admin };
+                enterPortal();
+                showToast('Logged in as Admin!', 'success');
+            } else {
+                switchLoginRole('student');
+                const st = getStudentById(target) || appData.students[0];
+                document.getElementById('login-id').value = st.id;
+                document.getElementById('login-password').value = st.password;
+                currentUser = { role: 'student', data: st };
+                enterPortal();
+                showToast(`Logged in as ${st.name} (${st.id})!`, 'success');
+            }
+        }
+
+        function togglePasswordVisibility(inputId) {
+            const inp = document.getElementById(inputId);
+            inp.type = inp.type === 'password' ? 'text' : 'password';
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const idVal = document.getElementById('login-id').value.trim();
+            const passVal = document.getElementById('login-password').value;
+
+            if (loginRoleSelected === 'admin') {
+                if (idVal.toLowerCase() === appData.admin.id.toLowerCase() && passVal === appData.admin.password) {
+                    currentUser = { role: 'admin', data: appData.admin };
+                    enterPortal();
+                    showToast('Welcome back, Admin!', 'success');
+                } else {
+                    showToast('Invalid Admin ID or Password!', 'error');
+                }
+            } else {
+                const student = appData.students.find(s => s.id.toLowerCase() === idVal.toLowerCase() && s.password === passVal);
+                if (student) {
+                    currentUser = { role: 'student', data: student };
+                    enterPortal();
+                    showToast(`Welcome, ${student.name}!`, 'success');
+                } else {
+                    showToast('Invalid Student ID or Password!', 'error');
+                }
+            }
+        }
+
+        function openResetModal() {
+            document.getElementById('reset-role').value = loginRoleSelected;
+            document.getElementById('reset-id').value = document.getElementById('login-id').value;
+            document.getElementById('reset-new-pass').value = '';
+            document.getElementById('reset-confirm-pass').value = '';
+            document.getElementById('reset-modal').classList.remove('hidden');
+        }
+
+        function closeResetModal() {
+            document.getElementById('reset-modal').classList.add('hidden');
+        }
+
+        function handlePasswordReset(e) {
+            e.preventDefault();
+            const role = document.getElementById('reset-role').value;
+            const idVal = document.getElementById('reset-id').value.trim();
+            const newPass = document.getElementById('reset-new-pass').value;
+            const confirmPass = document.getElementById('reset-confirm-pass').value;
+
+            if (newPass !== confirmPass) {
+                showToast('New password aur Confirm password match nahi kar rahe!', 'error');
+                return;
+            }
+
+            if (role === 'admin') {
+                if (idVal.toLowerCase() === appData.admin.id.toLowerCase()) {
+                    appData.admin.password = newPass;
+                    saveData();
+                    closeResetModal();
+                    showToast('Admin password updated successfully!', 'success');
+                } else {
+                    showToast('Admin Login ID not found!', 'error');
+                }
+            } else {
+                const idx = appData.students.findIndex(s => s.id.toLowerCase() === idVal.toLowerCase());
+                if (idx !== -1) {
+                    appData.students[idx].password = newPass;
+                    saveData();
+                    closeResetModal();
+                    showToast(`Password reset successful for ${appData.students[idx].name} (${appData.students[idx].id})!`, 'success');
+                } else {
+                    showToast('Student Login ID not found!', 'error');
+                }
+            }
+        }
+
+        function logout() {
+            stopWebcam();
+            currentUser = null;
+            document.getElementById('app-shell').classList.add('hidden');
+            document.getElementById('auth-view').classList.remove('hidden');
+            document.getElementById('login-password').value = '';
+            showToast('Logged out successfully', 'info');
+        }
+
+        // -------------------------------------------------------------------
+        // 4. PORTAL SHELL & NAVIGATION SETUP (SEPARATE SECTIONS)
+        // -------------------------------------------------------------------
+        const ADMIN_MENU = [
+            { id: 'dashboard', label: 'Dashboard Overview', icon: 'layout-dashboard' },
+            { id: 'students', label: 'Manage Students', icon: 'users' },
+            { id: 'punch-report', label: 'Punch In / Out Report', icon: 'scan-face' },
+            { id: 'monthly-report', label: 'Monthly Present / Absent', icon: 'calendar-check' },
+            { id: 'leaves', label: 'Leave Management', icon: 'file-clock' },
+            { id: 'complaints', label: 'Complaints Box', icon: 'message-square-warning' },
+            { id: 'holidays', label: 'Holiday Calendar', icon: 'calendar-days' }
+        ];
+
+        const STUDENT_MENU = [
+            { id: 'dashboard', label: 'Student Dashboard', icon: 'layout-dashboard' },
+            { id: 'punch', label: 'Live Face Punch In/Out', icon: 'camera' },
+            { id: 'punch-report', label: 'Punch In / Out Report', icon: 'scan-face' },
+            { id: 'monthly-report', label: 'Monthly Present / Absent', icon: 'calendar-check' },
+            { id: 'my-leaves', label: 'Leave Management', icon: 'file-clock' },
+            { id: 'my-complaints', label: 'Complaints Box', icon: 'message-square-plus' },
+            { id: 'holidays', label: 'Holiday Calendar', icon: 'calendar-days' }
+        ];
+
+        function enterPortal() {
+            document.getElementById('auth-view').classList.add('hidden');
+            document.getElementById('app-shell').classList.remove('hidden');
+
+            const isAdmin = currentUser.role === 'admin';
+            document.getElementById('portal-role-badge').textContent = isAdmin ? 'Admin Portal' : 'Student Portal';
+            document.getElementById('sidebar-avatar').src = currentUser.data.photo;
+            document.getElementById('sidebar-user-name').textContent = currentUser.data.name;
+            document.getElementById('sidebar-user-sub').textContent = isAdmin
+                ? `ID: ${currentUser.data.id}`
+                : `${currentUser.data.id} • ${currentUser.data.trade}`;
+
+            activeTab = 'dashboard';
+            renderSidebar();
+            renderActiveSection();
+        }
+
+        function toggleMobileSidebar(show) {
+            const sidebar = document.getElementById('sidebar');
+            const backdrop = document.getElementById('sidebar-backdrop');
+            if (show) {
+                sidebar.classList.remove('-translate-x-full');
+                backdrop.classList.remove('hidden');
+            } else {
+                sidebar.classList.add('-translate-x-full');
+                backdrop.classList.add('hidden');
+            }
+        }
+
+        function navigateTo(tabId) {
+            if (activeTab === 'punch' && tabId !== 'punch') {
+                stopWebcam();
+            }
+            activeTab = tabId;
+            toggleMobileSidebar(false);
+            renderSidebar();
+            renderActiveSection();
+        }
+
+        function renderSidebar() {
+            const menu = currentUser.role === 'admin' ? ADMIN_MENU : STUDENT_MENU;
+            const nav = document.getElementById('sidebar-nav');
+
+            const pendingLeaves = appData.leaves.filter(l => l.status === 'Pending').length;
+            const openComplaints = appData.complaints.filter(c => c.status !== 'Resolved').length;
+
+            nav.innerHTML = menu.map(item => {
+                const isActive = activeTab === item.id;
+                let badgeHtml = '';
+                if (currentUser.role === 'admin') {
+                    if (item.id === 'leaves' && pendingLeaves > 0) {
+                        badgeHtml = `<span class="ml-auto bg-amber-500 text-slate-950 text-[10px] font-bold px-2 py-0.5 rounded-full">${pendingLeaves}</span>`;
+                    }
+                    if (item.id === 'complaints' && openComplaints > 0) {
+                        badgeHtml = `<span class="ml-auto bg-rose-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">${openComplaints}</span>`;
+                    }
+                }
+
+                return `
+                    <button type="button" onclick="navigateTo('${item.id}')"
+                        class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition ${
+                            isActive
+                                ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30'
+                                : 'text-slate-400 hover:text-white hover:bg-slate-800/70'
+                        }">
+                        <i data-lucide="${item.icon}" class="w-4 h-4 shrink-0"></i>
+                        <span class="truncate">${item.label}</span>
+                        ${badgeHtml}
+                    </button>
+                `;
+            }).join('');
+
+            const currentItem = menu.find(m => m.id === activeTab);
+            document.getElementById('header-page-title').textContent = currentItem ? currentItem.label : 'Dashboard';
+            lucide.createIcons();
+        }
+
+        function renderActiveSection() {
+            const main = document.getElementById('main-content');
+            if (currentUser.role === 'admin') {
+                switch (activeTab) {
+                    case 'dashboard': renderAdminDashboard(main); break;
+                    case 'students': renderAdminStudents(main); break;
+                    case 'punch-report': renderAdminPunchReport(main); break;
+                    case 'monthly-report': renderAdminMonthlyReport(main); break;
+                    case 'leaves': renderAdminLeaves(main); break;
+                    case 'complaints': renderAdminComplaints(main); break;
+                    case 'holidays': renderAdminHolidays(main); break;
+                }
+            } else {
+                currentUser.data = getStudentById(currentUser.data.id);
+                switch (activeTab) {
+                    case 'dashboard': renderStudentDashboard(main); break;
+                    case 'punch': renderStudentPunch(main); break;
+                    case 'punch-report': renderStudentPunchReport(main); break;
+                    case 'monthly-report': renderStudentMonthlyReport(main); break;
+                    case 'my-leaves': renderStudentLeaves(main); break;
+                    case 'my-complaints': renderStudentComplaints(main); break;
+                    case 'holidays': renderStudentHolidays(main); break;
+                }
+            }
+            lucide.createIcons();
+        }
+
+        // -------------------------------------------------------------------
+        // 5. ADMIN PORTAL SECTIONS
+        // -------------------------------------------------------------------
+        function renderAdminDashboard(container) {
+            const today = getTodayStr();
+            const totalStudents = appData.students.length;
+            const presentToday = appData.punchLogs.filter(a => a.date === today).length;
+            const absentToday = Math.max(0, totalStudents - presentToday);
+            const pendingLeaves = appData.leaves.filter(l => l.status === 'Pending').length;
+            const activeComplaints = appData.complaints.filter(c => c.status !== 'Resolved').length;
+
+            const recentPunches = [...appData.punchLogs].reverse().slice(0, 5);
+
+            container.innerHTML = `
+                <!-- KPI Summary Cards -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs flex items-center justify-between">
+                        <div>
+                            <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Total Students</p>
+                            <h3 class="text-3xl font-extrabold text-slate-900 mt-1">${totalStudents}</h3>
+                            <p class="text-xs text-indigo-600 font-medium mt-1">${[...new Set(appData.students.map(s => s.batchId))].length} Active Batches</p>
+                        </div>
+                        <div class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
+                            <i data-lucide="users" class="w-6 h-6"></i>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs flex items-center justify-between">
+                        <div>
+                            <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Today Present / Absent</p>
+                            <h3 class="text-3xl font-extrabold text-emerald-600 mt-1">${presentToday} <span class="text-base font-semibold text-rose-500">/ ${absentToday} Abs</span></h3>
+                            <p class="text-xs text-slate-500 mt-1">Date: ${formatDateReadable(today)}</p>
+                        </div>
+                        <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                            <i data-lucide="user-check" class="w-6 h-6"></i>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs flex items-center justify-between cursor-pointer hover:border-amber-300 transition" onclick="navigateTo('leaves')">
+                        <div>
+                            <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Pending Leaves</p>
+                            <h3 class="text-3xl font-extrabold text-amber-600 mt-1">${pendingLeaves}</h3>
+                            <p class="text-xs text-amber-700 font-medium mt-1">Manage leave requests →</p>
+                        </div>
+                        <div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center">
+                            <i data-lucide="file-clock" class="w-6 h-6"></i>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs flex items-center justify-between cursor-pointer hover:border-rose-300 transition" onclick="navigateTo('complaints')">
+                        <div>
+                            <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Pending Complaints</p>
+                            <h3 class="text-3xl font-extrabold text-rose-600 mt-1">${activeComplaints}</h3>
+                            <p class="text-xs text-rose-700 font-medium mt-1">Resolve student issues →</p>
+                        </div>
+                        <div class="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center">
+                            <i data-lucide="message-square-warning" class="w-6 h-6"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Navigation & Recent Dual-Photo Punch Feed -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs space-y-3">
+                        <h3 class="text-base font-bold text-slate-900 flex items-center gap-2 mb-2">
+                            <i data-lucide="zap" class="w-4 h-4 text-indigo-600"></i> Quick Section Shortcuts
+                        </h3>
+                        <button onclick="navigateTo('students')" class="w-full p-3.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-semibold text-sm flex items-center gap-3 transition text-left">
+                            <i data-lucide="user-plus" class="w-5 h-5 shrink-0"></i>
+                            <div>
+                                <div>Add New Student & Batch</div>
+                                <div class="text-xs font-normal text-indigo-600/80">Create ID, Password, Trade & Photo</div>
+                            </div>
+                        </button>
+                        <button onclick="navigateTo('punch-report')" class="w-full p-3.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-semibold text-sm flex items-center gap-3 transition text-left">
+                            <i data-lucide="scan-face" class="w-5 h-5 shrink-0"></i>
+                            <div>
+                                <div>Punch In / Out Face Report</div>
+                                <div class="text-xs font-normal text-emerald-600/80">View In & Out selfies + GPS logs</div>
+                            </div>
+                        </button>
+                        <button onclick="navigateTo('monthly-report')" class="w-full p-3.5 rounded-xl bg-violet-50 hover:bg-violet-100 text-violet-700 font-semibold text-sm flex items-center gap-3 transition text-left">
+                            <i data-lucide="calendar-check" class="w-5 h-5 shrink-0"></i>
+                            <div>
+                                <div>Monthly Present / Absent Report</div>
+                                <div class="text-xs font-normal text-violet-600/80">Month-wise & Batch-wise analytics</div>
+                            </div>
+                        </button>
+                    </div>
+
+                    <div class="lg:col-span-2 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                                <i data-lucide="camera" class="w-4 h-4 text-emerald-600"></i> Recent Punch In & Punch Out Captures
+                            </h3>
+                            <button onclick="navigateTo('punch-report')" class="text-xs font-semibold text-indigo-600 hover:underline">Full Punch Report →</button>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr class="border-b border-slate-100 text-[11px] font-semibold uppercase text-slate-400">
+                                        <th class="py-2.5 px-3">Student</th>
+                                        <th class="py-2.5 px-3">Date</th>
+                                        <th class="py-2.5 px-3">Punch In (Photo + Time)</th>
+                                        <th class="py-2.5 px-3">Punch Out (Photo + Time)</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-100 text-sm">
+                                    ${recentPunches.map(log => {
+                                        const st = getStudentById(log.studentId) || { name: log.studentId, batchId: '-', photo: '' };
+                                        return `
+                                            <tr class="hover:bg-slate-50/80">
+                                                <td class="py-3 px-3">
+                                                    <div class="font-semibold text-slate-900">${st.name}</div>
+                                                    <div class="text-xs text-slate-400">${log.studentId} • ${st.batchId}</div>
+                                                </td>
+                                                <td class="py-3 px-3 text-xs font-semibold text-slate-600">${formatDateReadable(log.date)}</td>
+                                                <td class="py-3 px-3">
+                                                    <div class="flex items-center gap-2.5">
+                                                        <img onclick="openPhotoModal('${log.punchInPhoto}', '${st.name} - Punch In', '${formatDateReadable(log.date)} at ${log.punchInTime}', '${log.punchInLocation}')"
+                                                             src="${log.punchInPhoto}" class="w-9 h-9 rounded-xl object-cover border border-emerald-200 cursor-pointer hover:scale-105 transition" title="Click to enlarge">
+                                                        <span class="text-xs font-bold text-emerald-600">${log.punchInTime}</span>
+                                                    </div>
+                                                </td>
+                                                <td class="py-3 px-3">
+                                                    ${log.punchOutTime ? `
+                                                        <div class="flex items-center gap-2.5">
+                                                            <img onclick="openPhotoModal('${log.punchOutPhoto}', '${st.name} - Punch Out', '${formatDateReadable(log.date)} at ${log.punchOutTime}', '${log.punchOutLocation}')"
+                                                                 src="${log.punchOutPhoto}" class="w-9 h-9 rounded-xl object-cover border border-rose-200 cursor-pointer hover:scale-105 transition" title="Click to enlarge">
+                                                            <span class="text-xs font-bold text-rose-600">${log.punchOutTime}</span>
+                                                        </div>
+                                                    ` : `<span class="text-xs px-2 py-0.5 rounded-md bg-amber-100 text-amber-800 font-semibold">On Campus</span>`}
+                                                </td>
+                                            </tr>
+                                        `;
+                                    }).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- Admin: Manage Students & Batch Creation ---
+        let newStudentPhotoBase64 = '';
+
+        function renderAdminStudents(container) {
+            container.innerHTML = `
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    <!-- Create Student Form -->
+                    <div class="lg:col-span-5 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs h-fit">
+                        <h3 class="text-lg font-bold text-slate-900 mb-1 flex items-center gap-2">
+                            <i data-lucide="user-plus" class="w-5 h-5 text-indigo-600"></i> Create Student & Batch ID
+                        </h3>
+                        <p class="text-xs text-slate-500 mb-5">Student Login ID, Password, Batch ID, Trade aur Profile Photo add karein.</p>
+
+                        <form onsubmit="handleCreateStudent(event)" class="space-y-4">
+                            <!-- Photo Upload Preview -->
+                            <div class="flex items-center gap-4 p-3 bg-slate-50 rounded-2xl border border-dashed border-slate-300">
+                                <img id="new-stu-photo-preview" src="https://placehold.co/120x120/e2e8f0/64748b?text=Photo" class="w-16 h-16 rounded-2xl object-cover bg-white border border-slate-200" alt="Preview">
+                                <div class="flex-1">
+                                    <label class="block text-xs font-semibold text-slate-700 mb-1">Profile Photo Upload</label>
+                                    <input type="file" accept="image/*" onchange="handleStudentPhotoUpload(event)" class="block w-full text-xs text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 cursor-pointer">
+                                    <p class="text-[11px] text-slate-400 mt-1">Optional: Auto-avatar generate hoga agar upload na karein.</p>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Student Login ID *</label>
+                                    <input type="text" id="stu-id" required placeholder="e.g. STU005" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 uppercase">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Login Password *</label>
+                                    <input type="text" id="stu-pass" required placeholder="e.g. pass123" value="pass123" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Student Full Name *</label>
+                                <input type="text" id="stu-name" required placeholder="e.g. Vikas Verma" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Batch ID No. *</label>
+                                    <input type="text" id="stu-batch" required list="batch-suggestions" placeholder="e.g. B-2026-01" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 uppercase">
+                                    <datalist id="batch-suggestions">
+                                        <option value="B-2026-01">
+                                        <option value="B-2026-02">
+                                        <option value="B-2026-03">
+                                    </datalist>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Trade Name *</label>
+                                    <select id="stu-trade" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                        <option value="Electrician">Electrician</option>
+                                        <option value="Fitter">Fitter</option>
+                                        <option value="COPA">COPA</option>
+                                        <option value="Welder">Welder</option>
+                                        <option value="Mechanic">Mechanic</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Mobile Number</label>
+                                <input type="tel" id="stu-phone" placeholder="e.g. 9876543210" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            </div>
+
+                            <button type="submit" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl text-sm shadow-md shadow-indigo-600/20 transition flex items-center justify-center gap-2">
+                                <i data-lucide="check-circle" class="w-4 h-4"></i> Create Student Account
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Registered Students List -->
+                    <div class="lg:col-span-7 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
+                            <div>
+                                <h3 class="text-lg font-bold text-slate-900">Registered Students (${appData.students.length})</h3>
+                                <p class="text-xs text-slate-500">Search by Name, Login ID, Batch ID, or Trade</p>
+                            </div>
+                            <input type="text" id="student-search" oninput="filterStudentDirectory()" placeholder="Search students..." class="px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full sm:w-60">
+                        </div>
+
+                        <div id="student-directory-list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            ${renderStudentCardsHTML(appData.students)}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderStudentCardsHTML(studentsList) {
+            if (studentsList.length === 0) {
+                return `<div class="col-span-full text-center py-10 text-slate-400 text-sm">No matching students found.</div>`;
+            }
+            return studentsList.map(st => `
+                <div class="p-4 rounded-2xl border border-slate-200/90 hover:border-indigo-300 bg-slate-50/50 transition flex items-start gap-3.5">
+                    <img src="${st.photo}" alt="${st.name}" class="w-14 h-14 rounded-2xl object-cover border border-slate-200 bg-white shrink-0">
+                    <div class="min-w-0 flex-1">
+                        <div class="flex items-center justify-between gap-2">
+                            <span class="text-xs font-bold px-2 py-0.5 rounded-md bg-indigo-100 text-indigo-700">${st.id}</span>
+                            <button onclick="deleteStudent('${st.id}')" title="Delete Student" class="text-slate-400 hover:text-rose-600 p-1">
+                                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                            </button>
+                        </div>
+                        <h4 class="font-bold text-slate-900 text-sm mt-1 truncate">${st.name}</h4>
+                        <p class="text-xs text-slate-600 font-medium">${st.trade}</p>
+                        <div class="mt-2 pt-2 border-t border-slate-200/70 flex flex-wrap items-center justify-between gap-1 text-[11px] text-slate-500">
+                            <span class="font-semibold text-slate-700">Batch: ${st.batchId}</span>
+                            <span>Pass: <code class="bg-white px-1.5 py-0.5 rounded border border-slate-200">${st.password}</code></span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function handleStudentPhotoUpload(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                newStudentPhotoBase64 = evt.target.result;
+                document.getElementById('new-stu-photo-preview').src = newStudentPhotoBase64;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function handleCreateStudent(e) {
+            e.preventDefault();
+            const id = document.getElementById('stu-id').value.trim().toUpperCase();
+            const password = document.getElementById('stu-pass').value.trim();
+            const name = document.getElementById('stu-name').value.trim();
+            const batchId = document.getElementById('stu-batch').value.trim().toUpperCase();
+            const trade = document.getElementById('stu-trade').value;
+            const phone = document.getElementById('stu-phone').value.trim();
+
+            if (appData.students.some(s => s.id.toUpperCase() === id)) {
+                showToast(`Student ID "${id}" already exists!`, 'error');
+                return;
+            }
+
+            const initials = name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
+            const fallbackPhoto = `https://placehold.co/150x150/4f46e5/ffffff?text=${initials || 'ST'}`;
+
+            appData.students.unshift({
+                id,
+                password,
+                name,
+                batchId,
+                trade,
+                phone: phone || 'N/A',
+                photo: newStudentPhotoBase64 || fallbackPhoto,
+                createdAt: getTodayStr()
+            });
+
+            newStudentPhotoBase64 = '';
+            saveData();
+            showToast(`Student ${name} (${id}) created!`, 'success');
+            renderActiveSection();
+        }
+
+        function filterStudentDirectory() {
+            const q = document.getElementById('student-search').value.toLowerCase();
+            const filtered = appData.students.filter(s =>
+                s.id.toLowerCase().includes(q) ||
+                s.name.toLowerCase().includes(q) ||
+                s.batchId.toLowerCase().includes(q) ||
+                s.trade.toLowerCase().includes(q)
+            );
+            document.getElementById('student-directory-list').innerHTML = renderStudentCardsHTML(filtered);
+            lucide.createIcons();
+        }
+
+        function deleteStudent(id) {
+            appData.students = appData.students.filter(s => s.id !== id);
+            saveData();
+            showToast(`Student ${id} removed.`, 'info');
+            renderActiveSection();
+        }
+
+        // --- SEPARATE SECTION 4A: ADMIN PUNCH IN / OUT REPORT (ALL STUDENTS) ---
+        function renderAdminPunchReport(container) {
+            const batches = ['ALL', ...new Set(appData.students.map(s => s.batchId))];
+            container.innerHTML = `
+                <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs space-y-6">
+                    <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-4 border-b border-slate-100 pb-5">
+                        <div>
+                            <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                                <i data-lucide="scan-face" class="w-5 h-5 text-indigo-600"></i> All Students Punch In / Out Report
+                            </h3>
+                            <p class="text-xs text-slate-500">Side-by-side Punch-In & Punch-Out captured face photos, exact timestamps, and GPS coordinates.</p>
+                        </div>
+
+                        <div class="flex flex-wrap items-center gap-3">
+                            <div>
+                                <label class="block text-[11px] font-semibold uppercase text-slate-500 mb-1">Filter Date</label>
+                                <input type="date" id="admin-pnc-date" onchange="updateAdminPunchReportTable()" class="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold uppercase text-slate-500 mb-1">Batch ID</label>
+                                <select id="admin-pnc-batch" onchange="updateAdminPunchReportTable()" class="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                    ${batches.map(b => `<option value="${b}">${b === 'ALL' ? 'All Batches' : b}</option>`).join('')}
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold uppercase text-slate-500 mb-1">Student Name / ID</label>
+                                <input type="text" id="admin-pnc-search" oninput="updateAdminPunchReportTable()" placeholder="Search student..." class="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            </div>
+                            <div class="pt-4">
+                                <button type="button" onclick="clearAdminPunchFilters()" class="px-3 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-slate-50">Reset</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="admin-punch-table-wrapper"></div>
+                </div>
+            `;
+            updateAdminPunchReportTable();
+        }
+
+        function clearAdminPunchFilters() {
+            document.getElementById('admin-pnc-date').value = '';
+            document.getElementById('admin-pnc-batch').value = 'ALL';
+            document.getElementById('admin-pnc-search').value = '';
+            updateAdminPunchReportTable();
+        }
+
+        function updateAdminPunchReportTable() {
+            const dateFilter = document.getElementById('admin-pnc-date').value;
+            const batchFilter = document.getElementById('admin-pnc-batch').value;
+            const searchFilter = document.getElementById('admin-pnc-search').value.trim().toLowerCase();
+
+            const filteredLogs = appData.punchLogs
+                .filter(log => {
+                    const st = getStudentById(log.studentId) || { name: log.studentId, batchId: 'UNKNOWN', trade: '-' };
+                    if (dateFilter && log.date !== dateFilter) return false;
+                    if (batchFilter !== 'ALL' && st.batchId !== batchFilter) return false;
+                    if (searchFilter && !st.name.toLowerCase().includes(searchFilter) && !log.studentId.toLowerCase().includes(searchFilter)) return false;
+                    return true;
+                })
+                .sort((a, b) => b.date.localeCompare(a.date));
+
+            document.getElementById('admin-punch-table-wrapper').innerHTML = `
+                <div class="overflow-x-auto border border-slate-200 rounded-2xl">
+                    <table class="w-full text-left border-collapse text-sm">
+                        <thead class="bg-slate-50 text-[11px] font-semibold uppercase text-slate-500">
+                            <tr>
+                                <th class="py-3.5 px-4">Student & Batch</th>
+                                <th class="py-3.5 px-4">Date</th>
+                                <th class="py-3.5 px-4">Punch-In (Face + Time + GPS)</th>
+                                <th class="py-3.5 px-4">Punch-Out (Face + Time + GPS)</th>
+                                <th class="py-3.5 px-4 text-center">Duration</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                            ${filteredLogs.length ? filteredLogs.map(log => {
+                                const st = getStudentById(log.studentId) || { name: log.studentId, batchId: '-', trade: '-', photo: '' };
+                                const duration = calculateDurationHours(log.punchInTs, log.punchOutTs);
+                                return `
+                                    <tr class="hover:bg-slate-50/80">
+                                        <td class="py-3.5 px-4">
+                                            <div class="font-bold text-slate-900">${st.name}</div>
+                                            <div class="text-xs text-indigo-600 font-semibold">${log.studentId} • ${st.batchId}</div>
+                                            <div class="text-[11px] text-slate-400">${st.trade}</div>
+                                        </td>
+                                        <td class="py-3.5 px-4 text-xs font-bold text-slate-700 whitespace-nowrap">${formatDateReadable(log.date)}</td>
+                                        <td class="py-3.5 px-4">
+                                            <div class="flex items-start gap-3">
+                                                <img onclick="openPhotoModal('${log.punchInPhoto}', '${st.name} (${log.studentId}) - Punch In', '${formatDateReadable(log.date)} • ${log.punchInTime}', '${log.punchInLocation}')"
+                                                     src="${log.punchInPhoto}" class="w-12 h-12 rounded-xl object-cover border-2 border-emerald-200 cursor-pointer hover:scale-105 transition shrink-0" title="Click to preview Punch-In photo">
+                                                <div class="min-w-0">
+                                                    <span class="text-xs font-extrabold text-emerald-600 block">${log.punchInTime}</span>
+                                                    <span class="text-[11px] text-slate-500 block max-w-[200px] truncate" title="${log.punchInLocation}">${log.punchInLocation}</span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="py-3.5 px-4">
+                                            ${log.punchOutTime ? `
+                                                <div class="flex items-start gap-3">
+                                                    <img onclick="openPhotoModal('${log.punchOutPhoto}', '${st.name} (${log.studentId}) - Punch Out', '${formatDateReadable(log.date)} • ${log.punchOutTime}', '${log.punchOutLocation}')"
+                                                         src="${log.punchOutPhoto}" class="w-12 h-12 rounded-xl object-cover border-2 border-rose-200 cursor-pointer hover:scale-105 transition shrink-0" title="Click to preview Punch-Out photo">
+                                                    <div class="min-w-0">
+                                                        <span class="text-xs font-extrabold text-rose-600 block">${log.punchOutTime}</span>
+                                                        <span class="text-[11px] text-slate-500 block max-w-[200px] truncate" title="${log.punchOutLocation}">${log.punchOutLocation}</span>
+                                                    </div>
+                                                </div>
+                                            ` : `<span class="inline-block px-2.5 py-1 rounded-lg bg-amber-50 text-amber-700 border border-amber-200 text-xs font-semibold">Not Punched Out Yet</span>`}
+                                        </td>
+                                        <td class="py-3.5 px-4 text-center">
+                                            ${duration ? `<span class="px-2.5 py-1 rounded-lg bg-indigo-50 text-indigo-700 text-xs font-bold">${duration}</span>` : `<span class="text-xs text-slate-400">-</span>`}
+                                        </td>
+                                    </tr>
+                                `;
+                            }).join('') : `<tr><td colspan="5" class="py-10 text-center text-slate-400 text-sm">No punch logs match the selected filters.</td></tr>`}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        // --- SEPARATE SECTION 5A: ADMIN MONTHLY PRESENT / ABSENT REPORT (ALL STUDENTS) ---
+        function renderAdminMonthlyReport(container) {
+            const batches = ['ALL', ...new Set(appData.students.map(s => s.batchId))];
+            const defaultMonth = getCurrentMonthStr();
+
+            container.innerHTML = `
+                <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs space-y-6">
+                    <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-100 pb-5">
+                        <div>
+                            <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                                <i data-lucide="calendar-check" class="w-5 h-5 text-indigo-600"></i> All Students Monthly Present / Absent Report
+                            </h3>
+                            <p class="text-xs text-slate-500">Month-wise and Batch-wise Present Days, Absent Days, Approved Leaves & Attendance Percentage.</p>
+                        </div>
+
+                        <div class="flex flex-wrap items-center gap-3">
+                            <div>
+                                <label class="block text-[11px] font-semibold uppercase text-slate-500 mb-1">Select Month</label>
+                                <input type="month" id="admin-mon-month" value="${defaultMonth}" onchange="updateAdminMonthlyTable()" class="px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold uppercase text-slate-500 mb-1">Filter Batch ID</label>
+                                <select id="admin-mon-batch" onchange="updateAdminMonthlyTable()" class="px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                    ${batches.map(b => `<option value="${b}">${b === 'ALL' ? 'All Batches' : b}</option>`).join('')}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="admin-monthly-table-wrapper"></div>
+                </div>
+            `;
+            updateAdminMonthlyTable();
+        }
+
+        function updateAdminMonthlyTable() {
+            const monthStr = document.getElementById('admin-mon-month').value;
+            const batchVal = document.getElementById('admin-mon-batch').value;
+
+            const studentsList = batchVal === 'ALL'
+                ? appData.students
+                : appData.students.filter(s => s.batchId === batchVal);
+
+            document.getElementById('admin-monthly-table-wrapper').innerHTML = `
+                <div class="overflow-x-auto border border-slate-200 rounded-2xl">
+                    <table class="w-full text-left border-collapse text-sm">
+                        <thead class="bg-slate-50 text-[11px] font-semibold uppercase text-slate-500">
+                            <tr>
+                                <th class="py-3.5 px-4">Student Profile</th>
+                                <th class="py-3.5 px-4">Batch & Trade</th>
+                                <th class="py-3.5 px-4 text-center">Working Days</th>
+                                <th class="py-3.5 px-4 text-center">Present Days</th>
+                                <th class="py-3.5 px-4 text-center">Absent Days</th>
+                                <th class="py-3.5 px-4 text-center">Leaves</th>
+                                <th class="py-3.5 px-4">Attendance %</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                            ${studentsList.length ? studentsList.map(st => {
+                                const stats = computeMonthlyAttendanceStats(st.id, monthStr);
+                                return `
+                                    <tr class="hover:bg-slate-50">
+                                        <td class="py-3.5 px-4 flex items-center gap-3">
+                                            <img src="${st.photo}" class="w-10 h-10 rounded-xl object-cover border border-slate-200 shrink-0">
+                                            <div>
+                                                <div class="font-bold text-slate-900">${st.name}</div>
+                                                <div class="text-xs font-semibold text-indigo-600">${st.id}</div>
+                                            </div>
+                                        </td>
+                                        <td class="py-3.5 px-4">
+                                            <span class="px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 text-xs font-bold">${st.batchId}</span>
+                                            <div class="text-xs text-slate-500 mt-0.5">${st.trade}</div>
+                                        </td>
+                                        <td class="py-3.5 px-4 text-center font-semibold text-slate-700">${stats.workingDays}</td>
+                                        <td class="py-3.5 px-4 text-center">
+                                            <span class="px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 font-extrabold text-xs">${stats.presentCount}</span>
+                                        </td>
+                                        <td class="py-3.5 px-4 text-center">
+                                            <span class="px-2.5 py-1 rounded-lg bg-rose-50 text-rose-700 font-extrabold text-xs">${stats.absentCount}</span>
+                                        </td>
+                                        <td class="py-3.5 px-4 text-center">
+                                            <span class="px-2.5 py-1 rounded-lg bg-amber-50 text-amber-700 font-bold text-xs">${stats.leaveCount}</span>
+                                        </td>
+                                        <td class="py-3.5 px-4">
+                                            <div class="flex items-center gap-2.5">
+                                                <div class="w-24 h-2 bg-slate-100 rounded-full overflow-hidden">
+                                                    <div class="h-full ${stats.percentage >= 75 ? 'bg-emerald-500' : 'bg-amber-500'}" style="width: ${stats.percentage}%"></div>
+                                                </div>
+                                                <span class="text-xs font-extrabold ${stats.percentage >= 75 ? 'text-emerald-700' : 'text-amber-700'}">${stats.percentage}%</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                `;
+                            }).join('') : `<tr><td colspan="7" class="py-10 text-center text-slate-400 text-sm">No students found in this batch.</td></tr>`}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        // --- Admin: Leave Management ---
+        function renderAdminLeaves(container) {
+            container.innerHTML = `
+                <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs">
+                    <div class="mb-5">
+                        <h3 class="text-lg font-bold text-slate-900">Student Leave Applications</h3>
+                        <p class="text-xs text-slate-500">Approve or reject student leave requests with remarks.</p>
+                    </div>
+
+                    <div class="space-y-4">
+                        ${appData.leaves.length === 0 ? '<p class="text-sm text-slate-400 text-center py-8">No leave requests available.</p>' : appData.leaves.map(lv => {
+                            const st = getStudentById(lv.studentId) || { name: lv.studentId, batchId: '-', trade: '-', photo: '' };
+                            const badgeColor = lv.status === 'Approved' ? 'bg-emerald-100 text-emerald-700' : lv.status === 'Rejected' ? 'bg-rose-100 text-rose-700' : 'bg-amber-100 text-amber-800';
+                            return `
+                                <div class="p-5 rounded-2xl border border-slate-200 bg-slate-50/40 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                                    <div class="flex items-start gap-3.5">
+                                        <img src="${st.photo}" class="w-12 h-12 rounded-2xl object-cover border border-slate-200">
+                                        <div>
+                                            <div class="flex flex-wrap items-center gap-2">
+                                                <h4 class="font-bold text-slate-900 text-sm">${st.name} (${lv.studentId})</h4>
+                                                <span class="text-xs px-2 py-0.5 rounded-md bg-slate-200/70 text-slate-700 font-medium">${st.batchId} • ${st.trade}</span>
+                                                <span class="text-xs px-2.5 py-0.5 rounded-full font-bold ${badgeColor}">${lv.status}</span>
+                                            </div>
+                                            <p class="text-xs font-semibold text-indigo-600 mt-1">
+                                                Duration: ${formatDateReadable(lv.fromDate)} to ${formatDateReadable(lv.toDate)}
+                                            </p>
+                                            <p class="text-sm text-slate-700 mt-1.5 bg-white p-3 rounded-xl border border-slate-200/70">${lv.reason}</p>
+                                            ${lv.adminRemark ? `<p class="text-xs text-slate-500 mt-1.5"><strong>Admin Remark:</strong> ${lv.adminRemark}</p>` : ''}
+                                        </div>
+                                    </div>
+
+                                    <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 shrink-0">
+                                        <input type="text" id="remark-${lv.id}" placeholder="Optional remark..." value="${lv.adminRemark || ''}" class="px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                        <button onclick="updateLeaveStatus('${lv.id}', 'Approved')" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold transition">Approve</button>
+                                        <button onclick="updateLeaveStatus('${lv.id}', 'Rejected')" class="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold transition">Reject</button>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function updateLeaveStatus(leaveId, status) {
+            const lv = appData.leaves.find(l => l.id === leaveId);
+            if (!lv) return;
+            const remarkInp = document.getElementById(`remark-${leaveId}`);
+            lv.status = status;
+            lv.adminRemark = remarkInp ? remarkInp.value.trim() : '';
+            saveData();
+            showToast(`Leave ${status}!`, status === 'Approved' ? 'success' : 'warning');
+            renderSidebar();
+            renderActiveSection();
+        }
+
+        // --- Admin: Complaints Management ---
+        function renderAdminComplaints(container) {
+            container.innerHTML = `
+                <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs">
+                    <div class="mb-5">
+                        <h3 class="text-lg font-bold text-slate-900">Student Complaints & Grievance Box</h3>
+                        <p class="text-xs text-slate-500">Track student issues, update status (Pending / Resolved), and post replies.</p>
+                    </div>
+
+                    <div class="space-y-4">
+                        ${appData.complaints.length === 0 ? '<p class="text-sm text-slate-400 text-center py-8">No complaints registered.</p>' : appData.complaints.map(cmp => {
+                            const st = getStudentById(cmp.studentId) || { name: cmp.studentId, batchId: '-', trade: '-' };
+                            const statusStyle = cmp.status === 'Resolved' ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700';
+                            return `
+                                <div class="p-5 rounded-2xl border border-slate-200 bg-slate-50/40 space-y-3">
+                                    <div class="flex flex-wrap items-center justify-between gap-2">
+                                        <div>
+                                            <span class="text-xs font-bold text-indigo-600">${cmp.id} • ${cmp.category}</span>
+                                            <h4 class="text-base font-bold text-slate-900">${cmp.subject}</h4>
+                                            <p class="text-xs text-slate-500">By ${st.name} (${cmp.studentId} • ${st.batchId}) on ${formatDateReadable(cmp.date)}</p>
+                                        </div>
+                                        <span class="text-xs px-3 py-1 rounded-full font-bold ${statusStyle}">${cmp.status}</span>
+                                    </div>
+                                    <p class="text-sm text-slate-700 bg-white p-3.5 rounded-xl border border-slate-200/80">${cmp.description}</p>
+                                    <div class="flex flex-col sm:flex-row gap-2.5 pt-1">
+                                        <select id="cmp-status-${cmp.id}" class="px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-semibold">
+                                            <option value="Pending" ${cmp.status === 'Pending' ? 'selected' : ''}>Pending</option>
+                                            <option value="Resolved" ${cmp.status === 'Resolved' ? 'selected' : ''}>Resolved</option>
+                                        </select>
+                                        <input type="text" id="cmp-reply-${cmp.id}" value="${cmp.adminReply || ''}" placeholder="Write reply / action taken for student..." class="flex-1 px-3.5 py-2 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                        <button onclick="updateComplaintAdmin('${cmp.id}')" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl text-xs transition">Save Update</button>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function updateComplaintAdmin(cmpId) {
+            const cmp = appData.complaints.find(c => c.id === cmpId);
+            if (!cmp) return;
+            cmp.status = document.getElementById(`cmp-status-${cmpId}`).value;
+            cmp.adminReply = document.getElementById(`cmp-reply-${cmpId}`).value.trim();
+            saveData();
+            showToast('Complaint updated & reply posted!', 'success');
+            renderSidebar();
+            renderActiveSection();
+        }
+
+        // --- Admin: Holiday Create, Edit & Delete ---
+        let editingHolidayId = null;
+
+        function renderAdminHolidays(container) {
+            const sortedHolidays = [...appData.holidays].sort((a, b) => a.date.localeCompare(b.date));
+            container.innerHTML = `
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    <div class="lg:col-span-5 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs h-fit">
+                        <h3 class="text-lg font-bold text-slate-900 mb-1 flex items-center gap-2">
+                            <i data-lucide="calendar-plus" class="w-5 h-5 text-indigo-600"></i> ${editingHolidayId ? 'Edit Holiday' : 'Create New Holiday'}
+                        </h3>
+                        <p class="text-xs text-slate-500 mb-5">Students apne portal me ye holidays view kar sakenge.</p>
+
+                        <form onsubmit="handleSaveHoliday(event)" class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Holiday Date *</label>
+                                <input type="date" id="hol-date" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Holiday Title / Occasion *</label>
+                                <input type="text" id="hol-title" required placeholder="e.g. Republic Day" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Holiday Type</label>
+                                <select id="hol-type" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                    <option value="Gazetted Holiday">Gazetted Holiday</option>
+                                    <option value="National Holiday">National Holiday</option>
+                                    <option value="Public Holiday">Public Holiday</option>
+                                    <option value="Institute Event / Break">Institute Event / Break</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Notice / Description</label>
+                                <textarea id="hol-desc" rows="2" placeholder="Optional details for students..." class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+                            </div>
+                            <div class="flex gap-2">
+                                ${editingHolidayId ? `<button type="button" onclick="cancelEditHoliday()" class="flex-1 py-2.5 border border-slate-200 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-50">Cancel</button>` : ''}
+                                <button type="submit" class="flex-1 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl text-sm shadow-md shadow-indigo-600/20 transition">
+                                    ${editingHolidayId ? 'Update Holiday' : 'Add Holiday'}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="lg:col-span-7 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs">
+                        <h3 class="text-lg font-bold text-slate-900 mb-1">Institute Holiday Calendar (${sortedHolidays.length})</h3>
+                        <p class="text-xs text-slate-500 mb-5">Manage upcoming and declared institute holidays.</p>
+
+                        <div class="space-y-3">
+                            ${sortedHolidays.map(h => `
+                                <div class="p-4 rounded-2xl border border-slate-200 hover:border-indigo-300 bg-slate-50/50 flex items-center justify-between gap-4">
+                                    <div class="flex items-center gap-4">
+                                        <div class="w-14 h-14 rounded-2xl bg-indigo-600 text-white flex flex-col items-center justify-center shrink-0">
+                                            <span class="text-[10px] uppercase font-bold opacity-80">${new Date(h.date + 'T00:00:00').toLocaleDateString('en-US', { month: 'short' })}</span>
+                                            <span class="text-lg font-extrabold leading-none mt-0.5">${h.date.split('-')[2]}</span>
+                                        </div>
+                                        <div>
+                                            <div class="flex items-center gap-2">
+                                                <h4 class="font-bold text-slate-900 text-sm">${h.title}</h4>
+                                                <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700">${h.type}</span>
+                                            </div>
+                                            <p class="text-xs text-slate-500 mt-0.5">${h.description || 'Institute closed'}</p>
+                                            <p class="text-[11px] text-slate-400 mt-0.5">${formatDateReadable(h.date)}</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-1.5 shrink-0">
+                                        <button onclick="startEditHoliday('${h.id}')" title="Edit Holiday" class="p-2 rounded-xl bg-white border border-slate-200 text-indigo-600 hover:bg-indigo-50 transition">
+                                            <i data-lucide="pencil" class="w-4 h-4"></i>
+                                        </button>
+                                        <button onclick="deleteHoliday('${h.id}')" title="Delete Holiday" class="p-2 rounded-xl bg-white border border-slate-200 text-rose-600 hover:bg-rose-50 transition">
+                                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            if (editingHolidayId) {
+                const h = appData.holidays.find(item => item.id === editingHolidayId);
+                if (h) {
+                    document.getElementById('hol-date').value = h.date;
+                    document.getElementById('hol-title').value = h.title;
+                    document.getElementById('hol-type').value = h.type;
+                    document.getElementById('hol-desc').value = h.description;
+                }
+            }
+        }
+
+        function handleSaveHoliday(e) {
+            e.preventDefault();
+            const date = document.getElementById('hol-date').value;
+            const title = document.getElementById('hol-title').value.trim();
+            const type = document.getElementById('hol-type').value;
+            const description = document.getElementById('hol-desc').value.trim();
+
+            if (editingHolidayId) {
+                const idx = appData.holidays.findIndex(h => h.id === editingHolidayId);
+                if (idx !== -1) {
+                    appData.holidays[idx] = { ...appData.holidays[idx], date, title, type, description };
+                }
+                editingHolidayId = null;
+                showToast('Holiday updated successfully!', 'success');
+            } else {
+                appData.holidays.push({
+                    id: 'HOL-' + Date.now(),
+                    date,
+                    title,
+                    type,
+                    description
+                });
+                showToast('New holiday added to calendar!', 'success');
+            }
+            saveData();
+            renderActiveSection();
+        }
+
+        function startEditHoliday(id) {
+            editingHolidayId = id;
+            renderActiveSection();
+        }
+
+        function cancelEditHoliday() {
+            editingHolidayId = null;
+            renderActiveSection();
+        }
+
+        function deleteHoliday(id) {
+            appData.holidays = appData.holidays.filter(h => h.id !== id);
+            if (editingHolidayId === id) editingHolidayId = null;
+            saveData();
+            showToast('Holiday deleted.', 'info');
+            renderActiveSection();
+        }
+
+        // -------------------------------------------------------------------
+        // 6. STUDENT PORTAL SECTIONS
+        // -------------------------------------------------------------------
+        function renderStudentDashboard(container) {
+            const st = currentUser.data;
+            const today = getTodayStr();
+            const ym = getCurrentMonthStr();
+
+            const todayLog = appData.punchLogs.find(a => a.studentId === st.id && a.date === today);
+            const monthStats = computeMonthlyAttendanceStats(st.id, ym);
+            const myLeaves = appData.leaves.filter(l => l.studentId === st.id);
+            const upcomingHolidays = [...appData.holidays].sort((a, b) => a.date.localeCompare(b.date)).slice(0, 3);
+
+            container.innerHTML = `
+                <!-- Student ID Card Banner -->
+                <div class="bg-gradient-to-r from-indigo-600 via-indigo-700 to-violet-700 rounded-3xl p-6 sm:p-8 text-white shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+                    <div class="flex items-center gap-5">
+                        <img src="${st.photo}" alt="${st.name}" class="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl object-cover border-4 border-white/25 shadow-lg bg-white">
+                        <div>
+                            <span class="inline-block px-3 py-1 rounded-full bg-white/15 text-xs font-bold tracking-wider uppercase mb-2">
+                                ID: ${st.id} • Batch: ${st.batchId}
+                            </span>
+                            <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight">${st.name}</h2>
+                            <p class="text-indigo-100 text-sm mt-1 flex items-center gap-2">
+                                <i data-lucide="wrench" class="w-4 h-4"></i> Trade: <strong>${st.trade}</strong>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="w-full md:w-auto flex flex-col sm:flex-row gap-3">
+                        <button onclick="navigateTo('punch')" class="px-5 py-3.5 rounded-2xl bg-white text-indigo-700 hover:bg-indigo-50 font-bold text-sm shadow-lg flex items-center justify-center gap-2 transition">
+                            <i data-lucide="camera" class="w-5 h-5"></i>
+                            <span>${todayLog ? (todayLog.punchOutTime ? 'Today Punch Completed ✓' : 'Capture & Punch Out') : 'Live Face Punch In'}</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Student KPIs -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs cursor-pointer hover:border-indigo-300 transition" onclick="navigateTo('punch-report')">
+                        <p class="text-xs font-semibold uppercase text-slate-400">Today's Punch Status</p>
+                        <h3 class="text-xl font-extrabold mt-1.5 ${todayLog ? 'text-emerald-600' : 'text-amber-600'}">
+                            ${todayLog ? (todayLog.punchOutTime ? 'In & Out Captured ✓' : 'Punched In (Active)') : 'Not Punched In Yet'}
+                        </h3>
+                        <p class="text-xs text-slate-500 mt-1">
+                            ${todayLog ? `In: ${todayLog.punchInTime} ${todayLog.punchOutTime ? '• Out: ' + todayLog.punchOutTime : ''}` : 'Click Live Face Punch to start'}
+                        </p>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs cursor-pointer hover:border-indigo-300 transition" onclick="navigateTo('monthly-report')">
+                        <p class="text-xs font-semibold uppercase text-slate-400">This Month Present / Absent</p>
+                        <h3 class="text-2xl font-extrabold text-slate-900 mt-1.5">
+                            <span class="text-emerald-600">${monthStats.presentCount} P</span> / <span class="text-rose-600">${monthStats.absentCount} A</span>
+                            <span class="text-sm font-bold text-indigo-600">(${monthStats.percentage}%)</span>
+                        </h3>
+                        <p class="text-xs text-indigo-600 font-medium mt-1">View day-by-day monthly report →</p>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs cursor-pointer hover:border-indigo-300 transition" onclick="navigateTo('my-leaves')">
+                        <p class="text-xs font-semibold uppercase text-slate-400">My Leave Applications</p>
+                        <h3 class="text-2xl font-extrabold text-slate-900 mt-1.5">${myLeaves.length} Total</h3>
+                        <p class="text-xs text-slate-500 mt-1">${myLeaves.filter(l => l.status === 'Approved').length} Approved • ${myLeaves.filter(l => l.status === 'Pending').length} Pending</p>
+                    </div>
+                </div>
+
+                <!-- Upcoming Holidays Preview -->
+                <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                            <i data-lucide="calendar-days" class="w-4 h-4 text-indigo-600"></i> Upcoming Institute Holidays
+                        </h3>
+                        <button onclick="navigateTo('holidays')" class="text-xs font-semibold text-indigo-600 hover:underline">View Full Calendar</button>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        ${upcomingHolidays.map(h => `
+                            <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 flex items-center gap-3.5">
+                                <div class="w-12 h-12 rounded-xl bg-indigo-100 text-indigo-700 flex flex-col items-center justify-center shrink-0 font-bold">
+                                    <span class="text-[10px] uppercase">${new Date(h.date + 'T00:00:00').toLocaleDateString('en-US', { month: 'short' })}</span>
+                                    <span class="text-base leading-none">${h.date.split('-')[2]}</span>
+                                </div>
+                                <div class="min-w-0">
+                                    <h4 class="font-bold text-slate-900 text-sm truncate">${h.title}</h4>
+                                    <p class="text-xs text-slate-500 truncate">${h.type}</p>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- Student: Live Face Punch In & Punch Out (Dual Photo Capture) ---
+        function renderStudentPunch(container) {
+            const st = currentUser.data;
+            const today = getTodayStr();
+            const todayLog = appData.punchLogs.find(a => a.studentId === st.id && a.date === today);
+
+            container.innerHTML = `
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    <!-- Live Camera & Punch Controls -->
+                    <div class="lg:col-span-7 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs space-y-5">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                                    <i data-lucide="camera" class="w-5 h-5 text-indigo-600"></i> Live Face Capture (Punch In & Out)
+                                </h3>
+                                <p class="text-xs text-slate-500">Punch In aur Punch Out dono ke samay aapki live face photo & GPS save hogi.</p>
+                            </div>
+                            <span class="px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-bold flex items-center gap-1.5">
+                                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span> LIVE
+                            </span>
+                        </div>
+
+                        <!-- Camera Viewport -->
+                        <div class="relative rounded-2xl overflow-hidden bg-slate-900 aspect-video flex items-center justify-center border-2 border-slate-200">
+                            <video id="webcam-video" autoplay playsinline muted class="w-full h-full object-cover transform -scale-x-100"></video>
+                            <canvas id="webcam-canvas" class="hidden"></canvas>
+
+                            <div class="absolute inset-0 pointer-events-none flex items-center justify-center">
+                                <div class="w-44 h-56 sm:w-52 sm:h-64 border-2 border-dashed border-emerald-400/80 rounded-3xl flex items-end justify-center pb-3">
+                                    <span class="bg-slate-900/75 text-emerald-300 text-[10px] font-semibold px-2.5 py-0.5 rounded-full">Align Face Inside Frame</span>
+                                </div>
+                            </div>
+
+                            <div id="camera-fallback-banner" class="hidden absolute inset-0 bg-slate-900/90 text-white p-6 flex flex-col items-center justify-center text-center">
+                                <img src="${st.photo}" class="w-20 h-20 rounded-full object-cover border-2 border-indigo-400 mb-3">
+                                <p class="text-sm font-bold">Camera Preview Unavailable / Simulated Mode</p>
+                                <p class="text-xs text-slate-300 mt-1 max-w-sm">Camera blocked hone par system timestamped avatar snapshot capture karega.</p>
+                            </div>
+                        </div>
+
+                        <!-- Live GPS & Time Telemetry Bar -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-slate-50 p-4 rounded-2xl border border-slate-200/80 text-xs">
+                            <div class="flex items-start gap-2.5">
+                                <i data-lucide="clock" class="w-4 h-4 text-indigo-600 shrink-0 mt-0.5"></i>
+                                <div>
+                                    <span class="text-slate-400 font-semibold block">Live Date & Time</span>
+                                    <span id="punch-live-time" class="font-bold text-slate-900 text-sm">${new Date().toLocaleTimeString()}</span>
+                                    <span class="text-slate-500 block">${formatDateReadable(today)}</span>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-2.5">
+                                <i data-lucide="map-pin" class="w-4 h-4 text-rose-600 shrink-0 mt-0.5"></i>
+                                <div class="min-w-0">
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-slate-400 font-semibold">Live GPS Location</span>
+                                        <button type="button" onclick="detectLiveLocation()" class="text-indigo-600 hover:underline font-semibold">Refresh</button>
+                                    </div>
+                                    <span id="punch-live-location" class="font-bold text-slate-800 block mt-0.5 break-words">${currentGPSLocation}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Separate Capture & Punch In / Out Buttons -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+                            <button type="button" onclick="handleFacePunch('IN')" ${todayLog ? 'disabled' : ''}
+                                class="py-3.5 px-5 rounded-2xl font-bold text-sm flex items-center justify-center gap-2 transition shadow-lg ${
+                                    todayLog
+                                        ? 'bg-slate-100 text-slate-400 cursor-not-allowed shadow-none'
+                                        : 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-emerald-600/25'
+                                }">
+                                <i data-lucide="log-in" class="w-5 h-5"></i>
+                                <span>${todayLog ? 'Punch In Captured ✓' : 'Capture & Punch In'}</span>
+                            </button>
+
+                            <button type="button" onclick="handleFacePunch('OUT')" ${!todayLog || todayLog.punchOutTime ? 'disabled' : ''}
+                                class="py-3.5 px-5 rounded-2xl font-bold text-sm flex items-center justify-center gap-2 transition shadow-lg ${
+                                    !todayLog || todayLog.punchOutTime
+                                        ? 'bg-slate-100 text-slate-400 cursor-not-allowed shadow-none'
+                                        : 'bg-rose-600 hover:bg-rose-700 text-white shadow-rose-600/25'
+                                }">
+                                <i data-lucide="log-out" class="w-5 h-5"></i>
+                                <span>${todayLog && todayLog.punchOutTime ? 'Punch Out Captured ✓' : 'Capture & Punch Out'}</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Today's Dual-Photo Receipt Card -->
+                    <div class="lg:col-span-5 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col justify-between">
+                        <div>
+                            <h3 class="text-lg font-bold text-slate-900 mb-1">Today's Dual-Photo Verification</h3>
+                            <p class="text-xs text-slate-500 mb-5">${formatDateReadable(today)} • ${st.batchId}</p>
+
+                            ${todayLog ? `
+                                <div class="space-y-4">
+                                    <!-- Side-by-Side Punch In & Punch Out Captured Photos -->
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <div class="p-3 rounded-2xl bg-emerald-50/70 border border-emerald-200 text-center">
+                                            <span class="inline-block px-2 py-0.5 rounded-full bg-emerald-600 text-white text-[10px] font-bold mb-2">PUNCH IN PHOTO</span>
+                                            <img onclick="openPhotoModal('${todayLog.punchInPhoto}', '${st.name} - Punch In', '${formatDateReadable(today)} • ${todayLog.punchInTime}', '${todayLog.punchInLocation}')"
+                                                 src="${todayLog.punchInPhoto}" class="w-24 h-24 mx-auto rounded-2xl object-cover border-2 border-white shadow-sm cursor-pointer hover:scale-105 transition" alt="Punch In Selfie">
+                                            <p class="text-xs font-extrabold text-emerald-700 mt-2">${todayLog.punchInTime}</p>
+                                        </div>
+
+                                        <div class="p-3 rounded-2xl ${todayLog.punchOutTime ? 'bg-rose-50/70 border-rose-200' : 'bg-slate-50 border-slate-200 border-dashed'} border text-center flex flex-col justify-center">
+                                            <span class="inline-block px-2 py-0.5 rounded-full ${todayLog.punchOutTime ? 'bg-rose-600 text-white' : 'bg-slate-300 text-slate-700'} text-[10px] font-bold mb-2 mx-auto">PUNCH OUT PHOTO</span>
+                                            ${todayLog.punchOutTime ? `
+                                                <img onclick="openPhotoModal('${todayLog.punchOutPhoto}', '${st.name} - Punch Out', '${formatDateReadable(today)} • ${todayLog.punchOutTime}', '${todayLog.punchOutLocation}')"
+                                                     src="${todayLog.punchOutPhoto}" class="w-24 h-24 mx-auto rounded-2xl object-cover border-2 border-white shadow-sm cursor-pointer hover:scale-105 transition" alt="Punch Out Selfie">
+                                                <p class="text-xs font-extrabold text-rose-700 mt-2">${todayLog.punchOutTime}</p>
+                                            ` : `
+                                                <div class="w-24 h-24 mx-auto rounded-2xl bg-slate-100 flex items-center justify-center text-slate-400">
+                                                    <i data-lucide="camera-off" class="w-7 h-7"></i>
+                                                </div>
+                                                <p class="text-[11px] font-semibold text-slate-400 mt-2">Pending Punch Out</p>
+                                            `}
+                                        </div>
+                                    </div>
+
+                                    <!-- GPS Locations Details -->
+                                    <div class="space-y-2.5 text-xs bg-slate-50 p-4 rounded-2xl border border-slate-200/80">
+                                        <div>
+                                            <span class="text-slate-400 font-semibold block">Punch-In GPS Location:</span>
+                                            <span class="font-semibold text-slate-800">${todayLog.punchInLocation}</span>
+                                        </div>
+                                        ${todayLog.punchOutLocation ? `
+                                            <div class="pt-2 border-t border-slate-200/70">
+                                                <span class="text-slate-400 font-semibold block">Punch-Out GPS Location:</span>
+                                                <span class="font-semibold text-slate-800">${todayLog.punchOutLocation}</span>
+                                            </div>
+                                        ` : ''}
+                                    </div>
+                                </div>
+                            ` : `
+                                <div class="py-12 px-4 text-center border-2 border-dashed border-slate-200 rounded-2xl">
+                                    <div class="w-14 h-14 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center mx-auto mb-3">
+                                        <i data-lucide="scan-face" class="w-7 h-7"></i>
+                                    </div>
+                                    <h4 class="font-bold text-slate-800 text-sm">No Face Punch Recorded Today</h4>
+                                    <p class="text-xs text-slate-500 mt-1">Camera me apna face align karein aur "Capture & Punch In" button dabayein.</p>
+                                </div>
+                            `}
+                        </div>
+
+                        <button onclick="navigateTo('punch-report')" class="mt-5 w-full py-2.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-semibold text-xs transition flex items-center justify-center gap-1.5">
+                            <span>View Full Punch In / Out Report</span>
+                            <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            initWebcam();
+            detectLiveLocation();
+        }
+
+        async function initWebcam() {
+            const video = document.getElementById('webcam-video');
+            const fallback = document.getElementById('camera-fallback-banner');
+            if (!video) return;
+
+            try {
+                webcamStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false });
+                video.srcObject = webcamStream;
+            } catch (err) {
+                if (fallback) fallback.classList.remove('hidden');
+            }
+        }
+
+        function stopWebcam() {
+            if (webcamStream) {
+                webcamStream.getTracks().forEach(track => track.stop());
+                webcamStream = null;
+            }
+        }
+
+        function detectLiveLocation() {
+            const locEl = document.getElementById('punch-live-location');
+            if (!navigator.geolocation) {
+                currentGPSLocation = 'SkillTech Campus, Jamshedpur (22.8046° N, 86.2029° E)';
+                if (locEl) locEl.textContent = currentGPSLocation;
+                return;
+            }
+            navigator.geolocation.getCurrentPosition(
+                (pos) => {
+                    const lat = pos.coords.latitude.toFixed(4);
+                    const lng = pos.coords.longitude.toFixed(4);
+                    currentGPSLocation = `Verified GPS (${lat}° N, ${lng}° E) • Campus Zone`;
+                    if (locEl) locEl.textContent = currentGPSLocation;
+                },
+                () => {
+                    currentGPSLocation = 'SkillTech Campus, Jamshedpur (22.8046° N, 86.2029° E)';
+                    if (locEl) locEl.textContent = currentGPSLocation;
+                },
+                { timeout: 5000 }
+            );
+        }
+
+        function captureSnapshotFromVideo(typeLabel) {
+            const video = document.getElementById('webcam-video');
+            const canvas = document.getElementById('webcam-canvas');
+            if (video && canvas && video.videoWidth > 0) {
+                canvas.width = 260;
+                canvas.height = 260;
+                const ctx = canvas.getContext('2d');
+                ctx.save();
+                ctx.translate(canvas.width, 0);
+                ctx.scale(-1, 1);
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                ctx.restore();
+
+                // Stamp badge on captured photo
+                ctx.fillStyle = typeLabel === 'IN' ? 'rgba(5, 150, 105, 0.85)' : 'rgba(225, 29, 72, 0.85)';
+                ctx.fillRect(0, canvas.height - 32, canvas.width, 32);
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 12px Inter, sans-serif';
+                ctx.fillText(`PUNCH ${typeLabel} • ${new Date().toLocaleTimeString()}`, 10, canvas.height - 11);
+
+                return canvas.toDataURL('image/jpeg', 0.85);
+            }
+
+            // Fallback distinct colored placeholder for IN vs OUT if camera blocked
+            const bgColor = typeLabel === 'IN' ? '059669' : 'e11d48';
+            const initials = currentUser.data.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
+            return `https://placehold.co/240x240/${bgColor}/ffffff?text=${initials}+${typeLabel}`;
+        }
+
+        function handleFacePunch(type) {
+            const st = currentUser.data;
+            const today = getTodayStr();
+            const now = new Date();
+            const nowTime = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            const isoTs = now.toISOString();
+            const snapshot = captureSnapshotFromVideo(type);
+
+            if (type === 'IN') {
+                const exists = appData.punchLogs.find(a => a.studentId === st.id && a.date === today);
+                if (exists) {
+                    showToast('Aap aaj pehle hi Punch In kar chuke hain!', 'warning');
+                    return;
+                }
+                appData.punchLogs.push({
+                    id: 'PNC-' + Date.now(),
+                    studentId: st.id,
+                    date: today,
+                    punchInTime: nowTime,
+                    punchInTs: isoTs,
+                    punchInPhoto: snapshot,
+                    punchInLocation: currentGPSLocation,
+                    punchOutTime: null,
+                    punchOutTs: null,
+                    punchOutPhoto: null,
+                    punchOutLocation: null
+                });
+                saveData();
+                showToast(`Punch In Face Captured at ${nowTime}!`, 'success');
+            } else {
+                const log = appData.punchLogs.find(a => a.studentId === st.id && a.date === today);
+                if (!log) {
+                    showToast('Pehle Punch In karein!', 'error');
+                    return;
+                }
+                log.punchOutTime = nowTime;
+                log.punchOutTs = isoTs;
+                log.punchOutPhoto = snapshot;
+                log.punchOutLocation = currentGPSLocation;
+                saveData();
+                showToast(`Punch Out Face Captured at ${nowTime}!`, 'success');
+            }
+
+            renderActiveSection();
+        }
+
+        // --- SEPARATE SECTION 4B: STUDENT PUNCH IN / OUT REPORT (OWN LOGS ONLY) ---
+        function renderStudentPunchReport(container) {
+            const st = currentUser.data;
+            const myLogs = appData.punchLogs
+                .filter(p => p.studentId === st.id)
+                .sort((a, b) => b.date.localeCompare(a.date));
+
+            container.innerHTML = `
+                <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs space-y-6">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-4">
+                        <div>
+                            <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                                <i data-lucide="scan-face" class="w-5 h-5 text-indigo-600"></i> My Punch In / Out Report
+                            </h3>
+                            <p class="text-xs text-slate-500">Showing Punch-In & Punch-Out captured photos, timestamps & GPS locations for <strong>${st.name} (${st.id})</strong>. Click any photo to enlarge.</p>
+                        </div>
+                        <button onclick="navigateTo('punch')" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold transition flex items-center gap-1.5 self-start sm:self-auto">
+                            <i data-lucide="camera" class="w-4 h-4"></i> Open Live Camera
+                        </button>
+                    </div>
+
+                    <div class="overflow-x-auto border border-slate-200 rounded-2xl">
+                        <table class="w-full text-left border-collapse text-sm">
+                            <thead class="bg-slate-50 text-[11px] font-semibold uppercase text-slate-500">
+                                <tr>
+                                    <th class="py-3.5 px-4">Date</th>
+                                    <th class="py-3.5 px-4">Punch-In Photo & Time</th>
+                                    <th class="py-3.5 px-4">Punch-In GPS Location</th>
+                                    <th class="py-3.5 px-4">Punch-Out Photo & Time</th>
+                                    <th class="py-3.5 px-4">Punch-Out GPS Location</th>
+                                    <th class="py-3.5 px-4 text-center">Total Hours</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100">
+                                ${myLogs.length ? myLogs.map(log => {
+                                    const duration = calculateDurationHours(log.punchInTs, log.punchOutTs);
+                                    return `
+                                        <tr class="hover:bg-slate-50">
+                                            <td class="py-3.5 px-4 font-bold text-slate-800 text-xs whitespace-nowrap">${formatDateReadable(log.date)}</td>
+                                            <td class="py-3.5 px-4">
+                                                <div class="flex items-center gap-3">
+                                                    <img onclick="openPhotoModal('${log.punchInPhoto}', '${st.name} - Punch In', '${formatDateReadable(log.date)} • ${log.punchInTime}', '${log.punchInLocation}')"
+                                                         src="${log.punchInPhoto}" class="w-12 h-12 rounded-xl object-cover border-2 border-emerald-200 cursor-pointer hover:scale-105 transition shrink-0" title="Click to preview">
+                                                    <span class="text-xs font-extrabold text-emerald-600">${log.punchInTime}</span>
+                                                </div>
+                                            </td>
+                                            <td class="py-3.5 px-4 text-xs text-slate-600 max-w-[180px]">${log.punchInLocation}</td>
+                                            <td class="py-3.5 px-4">
+                                                ${log.punchOutTime ? `
+                                                    <div class="flex items-center gap-3">
+                                                        <img onclick="openPhotoModal('${log.punchOutPhoto}', '${st.name} - Punch Out', '${formatDateReadable(log.date)} • ${log.punchOutTime}', '${log.punchOutLocation}')"
+                                                             src="${log.punchOutPhoto}" class="w-12 h-12 rounded-xl object-cover border-2 border-rose-200 cursor-pointer hover:scale-105 transition shrink-0" title="Click to preview">
+                                                        <span class="text-xs font-extrabold text-rose-600">${log.punchOutTime}</span>
+                                                    </div>
+                                                ` : `<span class="px-2.5 py-1 rounded-lg bg-amber-50 text-amber-700 border border-amber-200 text-xs font-semibold">Pending Out</span>`}
+                                            </td>
+                                            <td class="py-3.5 px-4 text-xs text-slate-600 max-w-[180px]">${log.punchOutLocation || '-'}</td>
+                                            <td class="py-3.5 px-4 text-center">
+                                                ${duration ? `<span class="px-2.5 py-1 rounded-lg bg-indigo-50 text-indigo-700 text-xs font-bold">${duration}</span>` : `<span class="text-xs text-slate-400">-</span>`}
+                                            </td>
+                                        </tr>
+                                    `;
+                                }).join('') : `<tr><td colspan="6" class="py-10 text-center text-slate-400 text-sm">Abhi tak koi Punch In/Out record nahi hai.</td></tr>`}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- SEPARATE SECTION 5B: STUDENT MONTHLY PRESENT / ABSENT REPORT (OWN ONLY) ---
+        function renderStudentMonthlyReport(container) {
+            const defaultMonth = getCurrentMonthStr();
+            container.innerHTML = `
+                <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs space-y-6">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-4">
+                        <div>
+                            <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                                <i data-lucide="calendar-check" class="w-5 h-5 text-indigo-600"></i> My Monthly Present / Absent Report
+                            </h3>
+                            <p class="text-xs text-slate-500">Month-wise summary & day-by-day attendance grid for <strong>${currentUser.data.name} (${currentUser.data.id})</strong></p>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-semibold uppercase text-slate-400 mb-1">Select Month</label>
+                            <input type="month" id="stu-mon-month" value="${defaultMonth}" onchange="updateStudentMonthlyGrid()" class="px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+                    </div>
+
+                    <div id="stu-monthly-grid-body"></div>
+                </div>
+            `;
+            updateStudentMonthlyGrid();
+        }
+
+        function updateStudentMonthlyGrid() {
+            const monthStr = document.getElementById('stu-mon-month').value;
+            const stats = computeMonthlyAttendanceStats(currentUser.data.id, monthStr);
+
+            const statusBadgeStyles = {
+                Present: 'bg-emerald-50 border-emerald-200 text-emerald-700',
+                Absent: 'bg-rose-50 border-rose-200 text-rose-700',
+                Leave: 'bg-amber-50 border-amber-200 text-amber-800',
+                Holiday: 'bg-indigo-50 border-indigo-200 text-indigo-700',
+                Sunday: 'bg-slate-100 border-slate-200 text-slate-500',
+                Upcoming: 'bg-white border-slate-100 text-slate-300'
+            };
+
+            document.getElementById('stu-monthly-grid-body').innerHTML = `
+                <!-- Summary Cards -->
+                <div class="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
+                    <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/80">
+                        <span class="text-xs font-semibold text-slate-500">Working Days</span>
+                        <div class="text-2xl font-extrabold text-slate-800 mt-1">${stats.workingDays}</div>
+                    </div>
+                    <div class="p-4 rounded-2xl bg-emerald-50 border border-emerald-200/80">
+                        <span class="text-xs font-semibold text-emerald-700">Present Days</span>
+                        <div class="text-2xl font-extrabold text-emerald-800 mt-1">${stats.presentCount}</div>
+                    </div>
+                    <div class="p-4 rounded-2xl bg-rose-50 border border-rose-200/80">
+                        <span class="text-xs font-semibold text-rose-700">Absent Days</span>
+                        <div class="text-2xl font-extrabold text-rose-800 mt-1">${stats.absentCount}</div>
+                    </div>
+                    <div class="p-4 rounded-2xl bg-amber-50 border border-amber-200/80">
+                        <span class="text-xs font-semibold text-amber-800">Approved Leaves</span>
+                        <div class="text-2xl font-extrabold text-amber-900 mt-1">${stats.leaveCount}</div>
+                    </div>
+                    <div class="col-span-2 lg:col-span-1 p-4 rounded-2xl bg-indigo-600 text-white">
+                        <span class="text-xs font-semibold text-indigo-100">Attendance %</span>
+                        <div class="text-2xl font-extrabold mt-1">${stats.percentage}%</div>
+                    </div>
+                </div>
+
+                <!-- Day-by-Day Calendar Grid -->
+                <div>
+                    <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                        <h4 class="text-sm font-bold text-slate-800">Day-by-Day Attendance Status (${monthStr})</h4>
+                        <div class="flex flex-wrap items-center gap-3 text-[11px] font-semibold">
+                            <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> Present</span>
+                            <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span> Absent</span>
+                            <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span> Leave</span>
+                            <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-indigo-500"></span> Holiday</span>
+                            <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-slate-400"></span> Sunday</span>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-7 gap-2.5">
+                        ${stats.dailyBreakdown.map(item => `
+                            <div class="p-3 rounded-2xl border ${statusBadgeStyles[item.status]} flex flex-col items-center justify-center text-center">
+                                <span class="text-xs font-extrabold">${String(item.day).padStart(2, '0')}</span>
+                                <span class="text-[10px] font-bold uppercase tracking-wider mt-1">${item.status}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- Student: Leave Application & Status ---
+        function renderStudentLeaves(container) {
+            const st = currentUser.data;
+            const myLeaves = appData.leaves.filter(l => l.studentId === st.id);
+
+            container.innerHTML = `
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    <div class="lg:col-span-5 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs h-fit">
+                        <h3 class="text-lg font-bold text-slate-900 mb-1">Apply for Leave</h3>
+                        <p class="text-xs text-slate-500 mb-5">Chutti ke liye From Date, To Date aur Reason submit karein.</p>
+
+                        <form onsubmit="handleApplyLeave(event)" class="space-y-4">
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">From Date *</label>
+                                    <input type="date" id="lv-from" required value="${getTodayStr()}" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">To Date *</label>
+                                    <input type="date" id="lv-to" required value="${getTodayStr()}" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Reason for Leave *</label>
+                                <textarea id="lv-reason" rows="3" required placeholder="Apna reason clearly likhein..." class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+                            </div>
+                            <button type="submit" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl text-sm shadow-md shadow-indigo-600/20 transition">
+                                Submit Leave Request
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="lg:col-span-7 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs">
+                        <h3 class="text-lg font-bold text-slate-900 mb-1">My Leave History (${myLeaves.length})</h3>
+                        <p class="text-xs text-slate-500 mb-5">Admin approval status aur remarks yahan dekhein.</p>
+
+                        <div class="space-y-3">
+                            ${myLeaves.length === 0 ? '<p class="text-sm text-slate-400 text-center py-8">Abhi tak koi leave apply nahi ki gayi hai.</p>' : myLeaves.map(lv => {
+                                const badge = lv.status === 'Approved' ? 'bg-emerald-100 text-emerald-700' : lv.status === 'Rejected' ? 'bg-rose-100 text-rose-700' : 'bg-amber-100 text-amber-800';
+                                return `
+                                    <div class="p-4 rounded-2xl border border-slate-200 bg-slate-50/50 space-y-2">
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-xs font-bold text-indigo-600">${formatDateReadable(lv.fromDate)} — ${formatDateReadable(lv.toDate)}</span>
+                                            <span class="text-xs px-2.5 py-0.5 rounded-full font-bold ${badge}">${lv.status}</span>
+                                        </div>
+                                        <p class="text-sm text-slate-700">${lv.reason}</p>
+                                        ${lv.adminRemark ? `<div class="text-xs bg-white p-2.5 rounded-xl border border-slate-200 text-slate-600"><strong>Admin Remark:</strong> ${lv.adminRemark}</div>` : ''}
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function handleApplyLeave(e) {
+            e.preventDefault();
+            const fromDate = document.getElementById('lv-from').value;
+            const toDate = document.getElementById('lv-to').value;
+            const reason = document.getElementById('lv-reason').value.trim();
+
+            appData.leaves.unshift({
+                id: 'LV-' + Date.now(),
+                studentId: currentUser.data.id,
+                fromDate,
+                toDate,
+                reason,
+                status: 'Pending',
+                adminRemark: '',
+                appliedOn: getTodayStr()
+            });
+
+            saveData();
+            showToast('Leave application submitted to Admin!', 'success');
+            renderActiveSection();
+        }
+
+        // --- Student: Complaints Box ---
+        function renderStudentComplaints(container) {
+            const st = currentUser.data;
+            const myComplaints = appData.complaints.filter(c => c.studentId === st.id);
+
+            container.innerHTML = `
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    <div class="lg:col-span-5 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs h-fit">
+                        <h3 class="text-lg font-bold text-slate-900 mb-1">Submit a Complaint</h3>
+                        <p class="text-xs text-slate-500 mb-5">Subject aur Description likh kar Admin ko complaint bhejein.</p>
+
+                        <form onsubmit="handleCreateComplaint(event)" class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Category *</label>
+                                <select id="cmp-cat" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                    <option value="Lab & Workshop Equipment">Lab & Workshop Equipment</option>
+                                    <option value="IT & Computer Lab">IT & Computer Lab</option>
+                                    <option value="Classroom & Infrastructure">Classroom & Infrastructure</option>
+                                    <option value="Attendance / ID Issue">Attendance / ID Issue</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Subject *</label>
+                                <input type="text" id="cmp-sub" required placeholder="Short title of your complaint" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Description *</label>
+                                <textarea id="cmp-desc" rows="3" required placeholder="Apni complaint detail me likhein..." class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+                            </div>
+                            <button type="submit" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl text-sm shadow-md shadow-indigo-600/20 transition">
+                                Submit Complaint
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="lg:col-span-7 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs">
+                        <h3 class="text-lg font-bold text-slate-900 mb-1">My Complaints & Admin Replies (${myComplaints.length})</h3>
+                        <p class="text-xs text-slate-500 mb-5">Track resolution status and official replies.</p>
+
+                        <div class="space-y-3">
+                            ${myComplaints.length === 0 ? '<p class="text-sm text-slate-400 text-center py-8">Koi complaint darj nahi hai.</p>' : myComplaints.map(c => {
+                                const badge = c.status === 'Resolved' ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700';
+                                return `
+                                    <div class="p-4 rounded-2xl border border-slate-200 bg-slate-50/50 space-y-2">
+                                        <div class="flex items-center justify-between gap-2">
+                                            <span class="text-xs font-bold text-slate-500">${c.category} • ${formatDateReadable(c.date)}</span>
+                                            <span class="text-xs px-2.5 py-0.5 rounded-full font-bold ${badge}">${c.status}</span>
+                                        </div>
+                                        <h4 class="font-bold text-slate-900 text-sm">${c.subject}</h4>
+                                        <p class="text-xs text-slate-600">${c.description}</p>
+                                        ${c.adminReply ? `<div class="text-xs bg-indigo-50/80 p-3 rounded-xl border border-indigo-100 text-indigo-900"><strong>Admin Reply:</strong> ${c.adminReply}</div>` : ''}
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function handleCreateComplaint(e) {
+            e.preventDefault();
+            const category = document.getElementById('cmp-cat').value;
+            const subject = document.getElementById('cmp-sub').value.trim();
+            const description = document.getElementById('cmp-desc').value.trim();
+
+            appData.complaints.unshift({
+                id: 'CMP-' + Math.floor(100 + Math.random() * 900),
+                studentId: currentUser.data.id,
+                category,
+                subject,
+                description,
+                status: 'Pending',
+                adminReply: '',
+                date: getTodayStr()
+            });
+
+            saveData();
+            showToast('Complaint registered successfully!', 'success');
+            renderActiveSection();
+        }
+
+        // --- Student: Holiday Calendar (View Only) ---
+        function renderStudentHolidays(container) {
+            const sortedHolidays = [...appData.holidays].sort((a, b) => a.date.localeCompare(b.date));
+            container.innerHTML = `
+                <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs">
+                    <div class="flex items-center justify-between mb-6">
+                        <div>
+                            <h3 class="text-lg font-bold text-slate-900">Institute Holiday Calendar (View Only)</h3>
+                            <p class="text-xs text-slate-500">Official holiday schedule published by Institute Administration.</p>
+                        </div>
+                        <span class="px-3 py-1 rounded-full bg-slate-100 text-slate-600 text-xs font-semibold flex items-center gap-1.5">
+                            <i data-lucide="eye" class="w-3.5 h-3.5"></i> View Only
+                        </span>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        ${sortedHolidays.map(h => `
+                            <div class="p-5 rounded-2xl border border-slate-200 bg-gradient-to-br from-white to-slate-50 flex items-start gap-4">
+                                <div class="w-14 h-14 rounded-2xl bg-indigo-600 text-white flex flex-col items-center justify-center shrink-0 shadow-md shadow-indigo-600/20">
+                                    <span class="text-[10px] uppercase font-bold opacity-85">${new Date(h.date + 'T00:00:00').toLocaleDateString('en-US', { month: 'short' })}</span>
+                                    <span class="text-xl font-extrabold leading-none mt-0.5">${h.date.split('-')[2]}</span>
+                                </div>
+                                <div>
+                                    <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-700">${h.type}</span>
+                                    <h4 class="font-bold text-slate-900 text-base mt-1.5">${h.title}</h4>
+                                    <p class="text-xs text-slate-500 mt-1">${h.description || 'Institute Closed'}</p>
+                                    <p class="text-[11px] font-semibold text-slate-400 mt-2">${formatDateReadable(h.date)}</p>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        // -------------------------------------------------------------------
+        // 7. LIVE CLOCK & INITIALIZATION
+        // -------------------------------------------------------------------
+        function startLiveClocks() {
+            const update = () => {
+                const now = new Date();
+                const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                const dateStr = now.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+
+                const headerClock = document.getElementById('header-live-clock');
+                const headerDate = document.getElementById('header-date-display');
+                const punchClock = document.getElementById('punch-live-time');
+
+                if (headerClock) headerClock.textContent = timeStr;
+                if (headerDate) headerDate.textContent = dateStr;
+                if (punchClock) punchClock.textContent = timeStr;
+            };
+            update();
+            setInterval(update, 1000);
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            startLiveClocks();
+        });
+    </script>
+</body>
+</html>
